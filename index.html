@@ -1,0 +1,1517 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>AWSこれだけは知っておけ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: 各サービスは「大きな図を全幅で1〜2枚 → 補足パネル」。カテゴリ色で全体を貫く */
+:root{
+  --bg:#F1F4F6; --surface:#FFFFFF; --soft:#E6EBF0; --land:#DCE3EA; --ink:#17202A; --muted:#56616F; --line:#D3DAE2;
+  --c-compute:#C8661A; --c-storage:#2B8A5A; --c-db:#2F5FC4; --c-net:#7646C4; --c-sec:#C23541; --c-ops:#9A7A00; --c-geo:#4F6874; --c-ai:#0B8794;
+  --ok:#2B8A5A; --ng:#C23541;
+  --f-display:"Dela Gothic One","Hiragino Kaku Gothic StdN","Yu Gothic",sans-serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F141A; --surface:#171F28; --soft:#212B36; --land:#26313D; --ink:#E5EAF0; --muted:#9BA6B2; --line:#2D3844;
+  --c-compute:#F0913D; --c-storage:#4CBE88; --c-db:#6E98F2; --c-net:#A985F2; --c-sec:#F06973; --c-ops:#D7B43A; --c-geo:#8EA6B2; --c-ai:#3CC5D1;
+  --ok:#4CBE88; --ng:#F06973; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F141A; --surface:#171F28; --soft:#212B36; --land:#26313D; --ink:#E5EAF0; --muted:#9BA6B2; --line:#2D3844;
+  --c-compute:#F0913D; --c-storage:#4CBE88; --c-db:#6E98F2; --c-net:#A985F2; --c-sec:#F06973; --c-ops:#D7B43A; --c-geo:#8EA6B2; --c-ai:#3CC5D1;
+  --ok:#4CBE88; --ng:#F06973; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+code{font-family:var(--f-mono);font-size:.9em}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:20px}
+@media (max-width:480px){.wrap{padding-inline:16px}}
+h1,h2,h3{text-wrap:balance;margin:0}
+.cat-compute{--c:var(--c-compute)} .cat-storage{--c:var(--c-storage)} .cat-db{--c:var(--c-db)} .cat-net{--c:var(--c-net)}
+.cat-sec{--c:var(--c-sec)} .cat-ops{--c:var(--c-ops)} .cat-geo{--c:var(--c-geo)} .cat-ai{--c:var(--c-ai)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav ul{list-style:none;margin:0 auto;max-width:1160px;padding:10px 20px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.nav ul::-webkit-scrollbar{display:none}
+.nav a{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;font-size:13px;font-weight:500;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.nav a::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
+.nav a:hover,.nav a:focus-visible{border-color:var(--c);outline:none}
+
+/* hero */
+.hero{padding-block:44px 16px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(34px,6.4vw,68px);line-height:1.15;margin-top:10px;letter-spacing:.01em}
+.hero h1 em{font-style:normal;color:var(--c-compute)}
+.hero p.sub{font-size:clamp(15px,2vw,18px);color:var(--muted);margin:14px 0 0;max-width:40em}
+.steps{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.steps li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13.5px;line-height:1.4}
+.steps .no{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-weight:600;font-size:13px}
+.steps b{display:block;font-size:14px}
+.steps small{color:var(--muted);font-size:12px}
+@media (max-width:900px){.steps{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
+
+/* figures */
+.fig{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 20px 16px;min-width:0}
+.fig-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;margin-bottom:10px}
+.fig-head h3{font-size:17px;font-weight:700}
+.fig-head span{font-size:12.5px;color:var(--muted)}
+.fig figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.6}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll-x > svg{display:block;width:100%;height:auto;min-width:680px;margin-inline:auto}
+.scroll-x.narrow > svg{min-width:520px}
+.scroll-hint{display:none;font-size:12px;color:var(--muted);margin-bottom:4px}
+@media (max-width:720px){.scroll-hint{display:block}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend span::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--c)}
+
+/* svg common */
+svg text{font-family:var(--f-body)}
+.node rect{fill:var(--surface);stroke:var(--c);stroke-width:2.2}
+.node.solid rect{fill:var(--c)}
+.node.solid .nt,.node.solid .ns{fill:var(--surface)}
+.node .nt{fill:var(--ink);font-weight:700;font-size:17px;text-anchor:middle}
+.node .ns{fill:var(--muted);font-size:13px;text-anchor:middle}
+a .node{cursor:pointer}
+a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--surface))}
+.box{fill:none;stroke:var(--line);stroke-width:1.6}
+.box.dash{stroke-dasharray:7 5;stroke:var(--muted);stroke-opacity:.55}
+.box.c{stroke:var(--c);fill:color-mix(in srgb,var(--c) 6%,transparent)}
+.lbl{fill:var(--muted);font-size:14px;font-weight:700}
+.lbl.c{fill:var(--c)}
+.small{fill:var(--muted);font-size:13px}
+.tiny{fill:var(--muted);font-size:11.5px}
+.ink{fill:var(--ink)}
+.mono{font-family:var(--f-mono)!important}
+.wire{fill:none;stroke:var(--muted);stroke-width:2}
+.wire.dash{stroke-dasharray:6 5}
+.wire.c{stroke:var(--c)}
+.wire.ok{stroke:var(--ok)}
+.wire.ng{stroke:var(--ng)}
+.arrowhead{fill:var(--muted)}
+.ngt{fill:var(--ng);font-weight:700}
+.okt{fill:var(--ok);font-weight:700}
+.person{fill:var(--muted)}
+.badge-n{fill:var(--ink)}
+.badge-t{fill:var(--bg);font-family:var(--f-mono);font-size:13px;font-weight:600;text-anchor:middle}
+.pilltxt{fill:var(--surface);font-size:13px;font-weight:700;text-anchor:middle}
+.land{fill:var(--land)}
+
+/* map grid */
+.sect-title{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.sect-title h2{font-family:var(--f-display);font-weight:400;font-size:clamp(22px,3.4vw,30px)}
+.sect-title p{margin:0;color:var(--muted);font-size:14px}
+.map{padding-block:40px 8px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.card{display:grid;grid-template-columns:44px minmax(0,1fr);gap:4px 12px;align-items:center;padding:14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);text-decoration:none;transition:border-color .15s,transform .15s}
+.card:hover,.card:focus-visible{border-color:var(--c);transform:translateY(-2px);outline:none}
+.card .ib{grid-row:span 2;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
+.card b{font-size:16px;line-height:1.3}
+.card small{color:var(--muted);font-size:12.5px;line-height:1.4}
+.card.kiro{border-style:dashed;border-color:var(--c)}
+.ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* service sections */
+.svc{padding-block:56px 8px;scroll-margin-top:60px}
+.svc + .svc{border-top:1px solid var(--line);margin-top:40px}
+.svc-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 18px;align-items:center;margin-bottom:22px}
+.badge{grid-row:span 3;width:68px;height:68px;border-radius:18px;display:grid;place-items:center;color:var(--surface);background:var(--c)}
+.badge .ico{width:36px;height:36px;stroke-width:1.7}
+.tag{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--c)}
+.svc-head h2{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
+.svc-head h2 .en{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,5vw,44px);line-height:1.1}
+.svc-head h2 .ja{font-size:clamp(17px,2.4vw,22px);font-weight:700;color:var(--c)}
+.svc-head p{margin:0;color:var(--muted);font-size:15px}
+@media (max-width:520px){.badge{width:52px;height:52px;border-radius:14px}.badge .ico{width:28px;height:28px}}
+.sbody{display:grid;gap:18px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
+.grid2.even{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
+@media (max-width:900px){.grid2,.grid2.even,.grid3{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.panel h3{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:12px;letter-spacing:.04em}
+.stack{display:grid;gap:18px;min-width:0}
+
+/* chips & points */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;padding:6px 12px;border-radius:999px;background:color-mix(in srgb,var(--c) 11%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.chip.star{background:var(--c);color:var(--surface);border-color:var(--c);font-weight:700}
+.uses{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.use{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13.5px;line-height:1.4}
+.use i{font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--c);font-weight:600}
+.warn{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:14px 16px;border-radius:14px;background:color-mix(in srgb,var(--ng) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--ng) 35%,transparent)}
+.warn .ico{color:var(--ng);width:24px;height:24px;margin-top:2px}
+.warn b{display:block;color:var(--ng);font-size:13.5px}
+.warn ul{margin:4px 0 0;padding-left:1.1em;font-size:14px}
+.warn li + li{margin-top:2px}
+.oneliner{padding:14px 18px;border-radius:14px;border:2px solid var(--c);display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:15px}
+.oneliner b{font-family:var(--f-display);font-weight:400;color:var(--c);font-size:13px;letter-spacing:.06em}
+.note{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+
+/* EC2 states */
+.states{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.state{border-radius:14px;padding:14px 12px;text-align:center;background:var(--soft);display:grid;gap:4px;justify-items:center}
+.state b{font-size:15px}
+.state small{font-size:12px;color:var(--muted);line-height:1.45}
+.state .coin{font-family:var(--f-mono);font-weight:600;font-size:20px;letter-spacing:.06em}
+.state.on{background:color-mix(in srgb,var(--ng) 12%,var(--surface))}
+.state.on .coin{color:var(--ng)}
+.state.stop .coin{color:var(--c-ops)}
+.state.del .coin{color:var(--ok)}
+@media (max-width:420px){.states{grid-template-columns:minmax(0,1fr)}}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{padding:12px 14px;border-radius:12px;border:1px solid var(--line)}
+.tile .k{font-family:var(--f-mono);font-size:12px;color:var(--c);font-weight:600}
+.tile b{display:block;font-size:15px;line-height:1.4}
+.tile span{font-size:12.5px;color:var(--muted)}
+
+/* tree / timeline */
+.tree{font-family:var(--f-mono);font-size:13.5px;line-height:1.9;background:var(--soft);border-radius:12px;padding:14px 16px;overflow-x:auto;white-space:pre;margin:0}
+.tree .b{color:var(--c);font-weight:600}
+.tree .m{color:var(--muted)}
+.timeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));position:relative;margin-top:6px}
+.timeline::before{content:"";position:absolute;left:8%;right:8%;top:16px;height:4px;background:linear-gradient(90deg,var(--c),var(--c-ops),var(--ng));border-radius:3px}
+.tstep{position:relative;text-align:center;display:grid;justify-items:center;gap:2px;padding-inline:4px}
+.tstep .dot{width:36px;height:36px;border-radius:50%;background:var(--surface);border:3px solid var(--c);display:grid;place-items:center;font-family:var(--f-mono);font-size:11.5px;font-weight:600}
+.tstep:nth-child(2) .dot{border-color:var(--c-ops)}
+.tstep:nth-child(3) .dot{border-color:var(--ng)}
+.tstep b{font-size:14px;margin-top:4px}
+.tstep small{font-size:12px;color:var(--muted);line-height:1.4}
+
+/* compare */
+.cmp{width:100%;border-collapse:collapse;font-size:14px}
+.cmp th,.cmp td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.cmp thead th{font-size:13px;color:var(--muted);font-weight:700}
+.cmp thead th.c1{color:var(--c)}
+.cmp tbody th{font-weight:500;color:var(--muted);font-size:13px}
+.cmp tr:last-child th,.cmp tr:last-child td{border-bottom:0}
+.dots{display:inline-flex;gap:3px;vertical-align:middle;margin-right:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--c)}
+.dots.g i.on{background:var(--muted)}
+.cmp small{color:var(--muted);font-size:12px;display:block;line-height:1.3}
+.code{font-family:var(--f-mono);font-size:12.5px;background:var(--soft);border-radius:10px;padding:10px 12px;overflow-x:auto;white-space:pre;margin:10px 0 0;line-height:1.6}
+.code .k{color:var(--c);font-weight:600}
+
+/* IAM formula */
+.formula{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center}
+.fpart{text-align:center;padding:12px 16px;border-radius:14px;background:color-mix(in srgb,var(--c) 11%,var(--surface));min-width:120px}
+.fpart b{display:block;font-size:22px;color:var(--c);font-family:var(--f-display);font-weight:400}
+.fpart small{font-size:12px;color:var(--muted)}
+.fop{font-family:var(--f-display);font-size:22px;color:var(--muted)}
+.elements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+
+/* Lambda bill */
+.bill{display:grid;gap:14px}
+.billrow{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;align-items:center;font-size:13px}
+.billrow b{font-size:14px}
+.bar{position:relative;height:36px;border-radius:8px;background:var(--soft);overflow:hidden}
+.bar .full{position:absolute;inset:0;background:color-mix(in srgb,var(--c-compute) 70%,transparent)}
+.bar .spike{position:absolute;top:0;bottom:0;width:1.8%;background:var(--c)}
+.bar span.t{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--ink);background:color-mix(in srgb,var(--surface) 70%,transparent);padding:0 6px;border-radius:4px}
+.axis{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;color:var(--muted);padding-left:82px}
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.vs > div{padding:14px;border-radius:12px;background:var(--soft);text-align:center}
+.vs b{display:block;font-size:16px}
+.vs small{color:var(--muted);font-size:12.5px}
+
+/* CloudFront routes */
+.route{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr) auto;align-items:center;gap:8px;padding:14px 0}
+.route + .route{border-top:1px dashed var(--line)}
+.route .tag2{grid-column:1/-1;font-size:13px;font-weight:700;color:var(--muted);display:flex;gap:8px;align-items:center}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:1px 9px;border-radius:999px}
+.pill.slow{background:color-mix(in srgb,var(--ng) 15%,transparent);color:var(--ng)}
+.pill.fast{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.pt{padding:8px 10px;border-radius:10px;background:var(--soft);font-size:12.5px;text-align:center;line-height:1.35;min-width:0}
+.pt b{display:block;font-size:13px}
+.pt.edge{background:var(--c);color:var(--surface)}
+.pt.ghost{visibility:hidden}
+.ln{height:0;border-top:3px solid var(--muted);position:relative}
+.ln.long{border-top-style:dashed;border-color:var(--ng)}
+.ln.short{border-color:var(--ok)}
+.ln.faint{border-top-style:dotted;border-color:var(--muted)}
+.ln span{position:absolute;left:50%;transform:translate(-50%,-130%);font-size:11.5px;color:var(--muted);white-space:nowrap}
+@media (max-width:480px){.ln span{display:none}}
+
+/* Route53 records */
+.recs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:760px){.recs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rec{padding:12px;border-radius:12px;border:1px solid var(--line)}
+.rec b{font-family:var(--f-mono);font-size:18px;color:var(--c)}
+.rec span{display:block;font-size:13.5px;line-height:1.45}
+.rec code{font-size:11.5px;color:var(--muted);word-break:break-all}
+
+.fit{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.fit li{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:10px;font-size:14px;padding:8px 10px;border-radius:10px;background:var(--soft)}
+.fit .m{font-size:18px;text-align:center;font-weight:700;color:var(--ok)}
+.fit .m.tri{color:var(--c-ops)}
+.fit small{color:var(--muted);font-size:12px}
+.regions{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.regions li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 12px;border-radius:10px;background:var(--soft);font-size:14px}
+.regions code{font-size:12px;color:var(--c)}
+.regions li.note2{background:color-mix(in srgb,var(--c-ops) 13%,var(--surface))}
+.regions li small{grid-column:1/-1;font-size:12px;color:var(--muted);line-height:1.4}
+
+/* Kiro */
+.kiro-sec{padding-block:64px 16px;scroll-margin-top:60px}
+.kiro-hero{border-radius:22px;padding:28px;background:color-mix(in srgb,var(--c) 10%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.kiro-hero .new{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.12em;padding:3px 10px;border-radius:999px;background:var(--c);color:var(--surface)}
+.kiro-hero h2{margin-top:12px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
+.kiro-hero h2 .en{font-family:var(--f-display);font-weight:400;font-size:clamp(34px,5.6vw,52px);line-height:1.1}
+.kiro-hero h2 .ja{font-size:clamp(17px,2.4vw,22px);font-weight:700;color:var(--c)}
+.kiro-hero p{margin:8px 0 0;max-width:46em;color:var(--muted)}
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
+.mode{padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+.mode b{font-size:17px}
+.mode .k{font-family:var(--f-mono);font-size:11.5px;color:var(--c);font-weight:600;display:block}
+.mode p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+@media (max-width:560px){.modes{grid-template-columns:minmax(0,1fr)}}
+.feat{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.f{padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+.f .k{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--c)}
+.f b{display:block;font-size:16px;margin-top:2px}
+.f p{margin:6px 0 0;font-size:13.5px;color:var(--muted);line-height:1.6}
+.doc{font-family:var(--f-mono);font-size:12.5px;line-height:1.75;background:var(--soft);border-radius:12px;padding:14px 16px;overflow-x:auto;white-space:pre;margin:0}
+.doc .h{color:var(--c);font-weight:600}
+.doc .hl{background:color-mix(in srgb,var(--c-ops) 30%,transparent);border-radius:3px;padding:0 2px}
+.tbl-wrap{overflow-x:auto}
+.price{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums;min-width:360px}
+.price th,.price td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right}
+.price th:first-child,.price td:first-child{text-align:left}
+.price thead th{font-size:12.5px;color:var(--muted);font-weight:700}
+.price td.plan{font-weight:700}
+.price .barc{width:38%;text-align:left}
+.cbar{height:12px;border-radius:6px;background:var(--c);min-width:3px}
+
+/* summary */
+.summary{padding-block:56px 64px}
+.sum-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.sum{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+.sum th,.sum td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left}
+.sum thead th{font-size:12.5px;color:var(--muted);background:var(--soft)}
+.sum tbody tr:last-child td{border-bottom:0}
+.sum td:first-child{font-weight:700;white-space:nowrap}
+.sum td:first-child::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:8px}
+.sum a{text-decoration:none}
+.sum a:hover{text-decoration:underline}
+footer{padding-block:0 48px;color:var(--muted);font-size:12.5px}
+footer a{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-ec2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M7 8h4M7 11h7"/></symbol>
+    <symbol id="i-s3" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6l2 12.5c.3 1.5 2.8 2.5 6 2.5s5.7-1 6-2.5L20 6"/></symbol>
+    <symbol id="i-rds" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7.5" ry="2.8"/><path d="M4.5 5v14c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V5"/><path d="M4.5 12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8"/></symbol>
+    <symbol id="i-iam" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8L20 3M16.5 6.5l3 3M14 9l2.2 2.2"/></symbol>
+    <symbol id="i-cw" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 14h3l2-5 3 8 2-4h2"/></symbol>
+    <symbol id="i-lambda" viewBox="0 0 24 24"><path d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12z"/></symbol>
+    <symbol id="i-cf" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.5 3.6 9s-1.2 6.5-3.6 9c-2.4-2.5-3.6-5.5-3.6-9S9.6 5.5 12 3z"/></symbol>
+    <symbol id="i-r53" viewBox="0 0 24 24"><path d="M12 2v20M5 5h11l3 2.5-3 2.5H5zM19 13H8l-3 2.5L8 18h11z"/></symbol>
+    <symbol id="i-ls" viewBox="0 0 24 24"><path d="M12 3v14M12 4l7 12h-7M11 7l-5.5 9H11"/><path d="M3 19c3 2 15 2 18 0"/></symbol>
+    <symbol id="i-vpc" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></symbol>
+    <symbol id="i-elb" viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="2"/><path d="M12 6.5v4.5M12 11l-6 5.5M12 11v5.5M12 11l6 5.5"/><circle cx="6" cy="18.5" r="2"/><circle cx="12" cy="18.5" r="2"/><circle cx="18" cy="18.5" r="2"/></symbol>
+    <symbol id="i-region" viewBox="0 0 24 24"><path d="M12 21.5s-7-6.3-7-12a7 7 0 0114 0c0 5.7-7 12-7 12z"/><circle cx="12" cy="9.5" r="2.6"/></symbol>
+    <symbol id="i-kiro" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M12 10.5l1.1 2.6 2.6 1.1-2.6 1.1L12 18l-1.1-2.7-2.6-1.1 2.6-1.1z"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19z"/><path d="M12 10v5M12 18v.01"/></symbol>
+    <symbol id="i-bld" viewBox="0 0 44 52"><rect x="2" y="2" width="40" height="48" rx="3" fill="none" stroke="currentColor" stroke-width="2.4"/><rect x="9" y="10" width="8" height="7" fill="currentColor"/><rect x="27" y="10" width="8" height="7" fill="currentColor"/><rect x="9" y="23" width="8" height="7" fill="currentColor"/><rect x="27" y="23" width="8" height="7" fill="currentColor"/><rect x="17" y="36" width="10" height="14" fill="currentColor"/></symbol>
+    <symbol id="i-user" viewBox="0 0 40 44"><circle cx="20" cy="11" r="9" fill="currentColor"/><path d="M3 43c0-11 7.6-18 17-18s17 7 17 18z" fill="currentColor"/></symbol>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="arrowhead" d="M0 0L10 5L0 10z"/></marker>
+    <marker id="ahok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path style="fill:var(--ok)" d="M0 0L10 5L0 10z"/></marker>
+    <marker id="ahc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path style="fill:var(--c-ai)" d="M0 0L10 5L0 10z"/></marker>
+  </defs>
+</svg>
+
+<nav class="nav" aria-label="目次">
+  <ul>
+    <li class="cat-compute"><a href="#ec2">EC2</a></li>
+    <li class="cat-storage"><a href="#s3">S3</a></li>
+    <li class="cat-db"><a href="#rds">RDS</a></li>
+    <li class="cat-sec"><a href="#iam">IAM</a></li>
+    <li class="cat-ops"><a href="#cloudwatch">CloudWatch</a></li>
+    <li class="cat-compute"><a href="#lambda">Lambda</a></li>
+    <li class="cat-net"><a href="#cloudfront">CloudFront</a></li>
+    <li class="cat-net"><a href="#route53">Route 53</a></li>
+    <li class="cat-compute"><a href="#lightsail">Lightsail</a></li>
+    <li class="cat-net"><a href="#vpc">VPC</a></li>
+    <li class="cat-net"><a href="#elb">ELB</a></li>
+    <li class="cat-geo"><a href="#region">リージョン/AZ</a></li>
+    <li class="cat-ai"><a href="#kiro">Kiro</a></li>
+    <li class="cat-geo"><a href="#summary">早見表</a></li>
+  </ul>
+</nav>
+
+<main>
+<header class="hero wrap">
+  <div class="eyebrow">AWS入門 ・ 基本12キーワード ＋ Kiro</div>
+  <h1>AWS<em>これだけは</em><br>知っておけ</h1>
+  <p class="sub">サーバー、倉庫、データベース、権限、監視。AWSの基本を「たとえ」と「図」でつかむための資料です。まずは下の1枚で全体像を見てください。</p>
+
+  <figure class="fig" style="margin-top:26px">
+    <div class="fig-head"><h3>よくあるWebシステムの全体図</h3><span>図中のサービスを押すと、その解説へ移動します</span></div>
+    <div class="scroll-hint">← 図は横にスクロールできます →</div>
+    <div class="scroll-x">
+    <svg viewBox="0 0 1000 530" role="img" aria-label="ユーザーのアクセスがRoute 53、CloudFront、ELBを通ってEC2とRDSに届く。S3とLambda、IAMとCloudWatchも含む典型的な構成図" style="min-width:820px">
+      <use href="#i-user" x="30" y="226" width="40" height="44" style="color:var(--muted)"/>
+      <text class="small" x="50" y="292" text-anchor="middle">ユーザー</text>
+      <rect class="box dash" x="428" y="14" width="560" height="482" rx="16"/>
+      <text class="lbl" x="444" y="40">東京リージョン（ap-northeast-1）</text>
+      <a href="#iam"><g class="node cat-sec"><rect x="444" y="54" width="262" height="40" rx="20"/><text class="nt" x="575" y="80" style="font-size:15px">IAM<tspan class="ns" dx="8" style="font-size:13px;font-weight:400">誰が何をできるか</tspan></text></g></a>
+      <a href="#cloudwatch"><g class="node cat-ops"><rect x="716" y="54" width="256" height="40" rx="20"/><text class="nt" x="844" y="80" style="font-size:15px">CloudWatch<tspan class="ns" dx="8" style="font-size:13px;font-weight:400">全体を見張る</tspan></text></g></a>
+      <g class="cat-net"><rect class="box c" x="444" y="120" width="352" height="360" rx="12"/></g>
+      <a href="#vpc"><text class="lbl" x="460" y="145" style="fill:var(--c-net)">VPC（自分の土地）</text></a>
+      <rect class="box dash" x="580" y="158" width="202" height="148" rx="10"/>
+      <text class="small" x="592" y="180" style="font-weight:700">AZ-a</text>
+      <rect class="box dash" x="580" y="318" width="202" height="148" rx="10"/>
+      <text class="small" x="592" y="340" style="font-weight:700">AZ-c</text>
+      <path class="wire" d="M74 252H96" marker-end="url(#ah)"/>
+      <path class="wire" d="M232 252H264" marker-end="url(#ah)"/>
+      <path class="wire" d="M400 264C430 264 430 296 456 296" marker-end="url(#ah)"/>
+      <path class="wire" d="M334 218V107H896V156" marker-end="url(#ah)"/>
+      <text class="small" x="904" y="142">画像など</text>
+      <path class="wire" d="M560 286C574 286 572 230 588 230" marker-end="url(#ah)"/>
+      <path class="wire" d="M560 306C574 306 572 388 588 388" marker-end="url(#ah)"/>
+      <path class="wire" d="M674 230H686" marker-end="url(#ah)"/>
+      <path class="wire" d="M674 388H686" marker-end="url(#ah)"/>
+      <path class="wire dash" d="M731 262V354"/>
+      <text class="small" x="739" y="344">同期</text>
+      <path class="wire dash" d="M896 228V326" marker-end="url(#ah)"/>
+      <text class="small" x="886" y="270" text-anchor="end">アップロード</text>
+      <text class="small" x="886" y="288" text-anchor="end">をきっかけに</text>
+      <a href="#route53"><g class="node cat-net"><rect x="100" y="218" width="132" height="68" rx="10"/><text class="nt" x="166" y="247">Route 53</text><text class="ns" x="166" y="270">住所案内</text></g></a>
+      <a href="#cloudfront"><g class="node cat-net"><rect x="268" y="218" width="132" height="68" rx="10"/><text class="nt" x="334" y="247">CloudFront</text><text class="ns" x="334" y="270">配送センター</text></g></a>
+      <a href="#elb"><g class="node cat-net"><rect x="460" y="262" width="100" height="68" rx="10"/><text class="nt" x="510" y="291">ELB</text><text class="ns" x="510" y="314">交通整理</text></g></a>
+      <a href="#ec2"><g class="node cat-compute"><rect x="592" y="196" width="82" height="66" rx="10"/><text class="nt" x="633" y="224">EC2</text><text class="ns" x="633" y="246">アプリ</text></g></a>
+      <a href="#rds"><g class="node cat-db"><rect x="690" y="196" width="82" height="66" rx="10"/><text class="nt" x="731" y="224">RDS</text><text class="ns" x="731" y="246">本番DB</text></g></a>
+      <a href="#ec2"><g class="node cat-compute"><rect x="592" y="354" width="82" height="66" rx="10"/><text class="nt" x="633" y="382">EC2</text><text class="ns" x="633" y="404">アプリ</text></g></a>
+      <a href="#rds"><g class="node cat-db"><rect x="690" y="354" width="82" height="66" rx="10"/><text class="nt" x="731" y="382">RDS</text><text class="ns" x="731" y="404">予備DB</text></g></a>
+      <a href="#s3"><g class="node cat-storage"><rect x="820" y="160" width="152" height="68" rx="10"/><text class="nt" x="896" y="189">S3</text><text class="ns" x="896" y="212">ファイル倉庫</text></g></a>
+      <a href="#lambda"><g class="node cat-compute"><rect x="820" y="330" width="152" height="68" rx="10"/><text class="nt" x="896" y="359">Lambda</text><text class="ns" x="896" y="382">自動処理</text></g></a>
+      <g><circle class="badge-n" cx="100" cy="218" r="14"/><text class="badge-t" x="100" y="223">1</text></g>
+      <g><circle class="badge-n" cx="268" cy="218" r="14"/><text class="badge-t" x="268" y="223">2</text></g>
+      <g><circle class="badge-n" cx="460" cy="262" r="14"/><text class="badge-t" x="460" y="267">3</text></g>
+      <g><circle class="badge-n" cx="592" cy="196" r="14"/><text class="badge-t" x="592" y="201">4</text></g>
+      <g><circle class="badge-n" cx="690" cy="196" r="14"/><text class="badge-t" x="690" y="201">5</text></g>
+      <text class="tiny" x="444" y="518">※ AZを2つに分け、片方が止まっても動き続ける構成（マルチAZ）</text>
+    </svg>
+    </div>
+    <ol class="steps">
+      <li><span class="no">1</span><span><b>名前を調べる</b><small>Route 53がドメインから住所を返す</small></span></li>
+      <li><span class="no">2</span><span><b>近くから届ける</b><small>CloudFrontがキャッシュで高速配信</small></span></li>
+      <li><span class="no">3</span><span><b>振り分ける</b><small>ELBが空いているEC2へ案内</small></span></li>
+      <li><span class="no">4</span><span><b>処理する</b><small>EC2のアプリが画面を作る</small></span></li>
+      <li><span class="no">5</span><span><b>記録する</b><small>RDSに注文などを保存</small></span></li>
+    </ol>
+    <div class="legend">
+      <span class="cat-compute">動かす</span><span class="cat-storage">置く</span><span class="cat-db">記録する</span><span class="cat-net">つなぐ・届ける</span><span class="cat-sec">守る</span><span class="cat-ops">見張る</span><span class="cat-geo">土台</span><span class="cat-ai">AIで作る</span>
+    </div>
+  </figure>
+</header>
+
+<section class="map wrap" aria-labelledby="map-t">
+  <div class="sect-title"><h2 id="map-t">ひとことで言うと</h2><p>13のキーワードを「身近なもの」にたとえると</p></div>
+  <div class="cards">
+    <a class="card cat-compute" href="#ec2"><span class="ib"><svg class="ico"><use href="#i-ec2"/></svg></span><b>EC2</b><small>借りられるパソコン</small></a>
+    <a class="card cat-storage" href="#s3"><span class="ib"><svg class="ico"><use href="#i-s3"/></svg></span><b>S3</b><small>なんでも置ける倉庫</small></a>
+    <a class="card cat-db" href="#rds"><span class="ib"><svg class="ico"><use href="#i-rds"/></svg></span><b>RDS</b><small>おまかせDB屋さん</small></a>
+    <a class="card cat-sec" href="#iam"><span class="ib"><svg class="ico"><use href="#i-iam"/></svg></span><b>IAM</b><small>入退室管理・通行証</small></a>
+    <a class="card cat-ops" href="#cloudwatch"><span class="ib"><svg class="ico"><use href="#i-cw"/></svg></span><b>CloudWatch</b><small>監視カメラ＆健康診断</small></a>
+    <a class="card cat-compute" href="#lambda"><span class="ib"><svg class="ico"><use href="#i-lambda"/></svg></span><b>Lambda</b><small>呼ばれた時だけ働くアルバイト</small></a>
+    <a class="card cat-net" href="#cloudfront"><span class="ib"><svg class="ico"><use href="#i-cf"/></svg></span><b>CloudFront</b><small>世界中にある配送センター</small></a>
+    <a class="card cat-net" href="#route53"><span class="ib"><svg class="ico"><use href="#i-r53"/></svg></span><b>Route 53</b><small>名前から住所を教える案内所</small></a>
+    <a class="card cat-compute" href="#lightsail"><span class="ib"><svg class="ico"><use href="#i-ls"/></svg></span><b>Lightsail</b><small>AWSの初心者セット</small></a>
+    <a class="card cat-net" href="#vpc"><span class="ib"><svg class="ico"><use href="#i-vpc"/></svg></span><b>VPC</b><small>自分専用の土地</small></a>
+    <a class="card cat-net" href="#elb"><span class="ib"><svg class="ico"><use href="#i-elb"/></svg></span><b>ELB</b><small>アクセスの交通整理員</small></a>
+    <a class="card cat-geo" href="#region"><span class="ib"><svg class="ico"><use href="#i-region"/></svg></span><b>リージョン / AZ</b><small>営業所エリアと独立した建物</small></a>
+    <a class="card cat-ai kiro" href="#kiro"><span class="ib"><svg class="ico"><use href="#i-kiro"/></svg></span><b>Kiro</b><small>仕様書から作るAI開発パートナー</small></a>
+  </div>
+</section>
+
+<div class="wrap">
+
+<!-- ================= EC2 ================= -->
+<section id="ec2" class="svc cat-compute">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-ec2"/></svg></div>
+    <div class="tag">01 ・ 動かす</div>
+    <h2><span class="en">EC2</span><span class="ja">借りられるパソコン</span></h2>
+    <p>AWSのデータセンターにある仮想サーバー。24時間365日、ネット越しに誰でもアクセスできます。借りた1台を「インスタンス」と呼びます。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>EC2インスタンスの中身と、Webサイトが表示されるまで</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 980 340" role="img" aria-label="スマホからのアクセスがインターネットを通り、セキュリティグループを通過してEC2インスタンスに届き、ページが返される。インスタンスはアプリ、OS、CPUとメモリの層とEBSディスクでできている">
+        <use href="#i-user" x="34" y="132" width="44" height="48" style="color:var(--muted)"/>
+        <text class="small" x="56" y="202" text-anchor="middle">見る人の</text>
+        <text class="small" x="56" y="220" text-anchor="middle">スマホ</text>
+        <rect x="128" y="132" width="150" height="46" rx="23" style="fill:var(--soft)"/>
+        <text class="ink" x="203" y="161" text-anchor="middle" style="font-size:15px;font-weight:700">インターネット</text>
+        <path class="wire" d="M90 155H124" marker-end="url(#ah)"/>
+        <path class="wire" d="M278 155H318" marker-end="url(#ah)"/>
+                <path class="wire dash" d="M318 262H70V228" marker-end="url(#ah)"/>
+        <text class="small" x="196" y="254" text-anchor="middle">Webページを返す</text>
+        <!-- instance -->
+        <rect x="336" y="30" width="420" height="280" rx="16" style="fill:color-mix(in srgb,var(--c-compute) 5%,var(--surface));stroke:var(--c-compute);stroke-width:2.4"/>
+        <text x="358" y="60" style="fill:var(--c-compute);font-size:15px;font-weight:700">EC2インスタンス（借りた1台）</text>
+        <rect x="324" y="118" width="26" height="84" rx="5" style="fill:var(--c-sec)"/>
+        <text x="337" y="166" text-anchor="middle" style="fill:var(--surface);font-size:12px;font-weight:700">SG</text>
+        <text x="337" y="228" text-anchor="middle" style="fill:var(--c-sec);font-size:12px;font-weight:700">入口の</text>
+        <text x="337" y="244" text-anchor="middle" style="fill:var(--c-sec);font-size:12px;font-weight:700">ルール</text>
+        <rect x="380" y="80" width="236" height="58" rx="8" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/>
+        <text class="ink" x="498" y="105" text-anchor="middle" style="font-size:15px;font-weight:700">あなたのWebアプリ</text>
+        <text class="small" x="498" y="126" text-anchor="middle">WordPress・APIなど</text>
+        <rect x="380" y="146" width="236" height="58" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 14%,var(--surface))"/>
+        <text class="ink" x="498" y="171" text-anchor="middle" style="font-size:15px;font-weight:700">OS</text>
+        <text class="small" x="498" y="192" text-anchor="middle">AMI ＝ 起動の出発点</text>
+        <rect x="380" y="212" width="236" height="58" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 28%,var(--surface))"/>
+        <text class="ink" x="498" y="237" text-anchor="middle" style="font-size:15px;font-weight:700">CPU・メモリ</text>
+        <text class="small" x="498" y="258" text-anchor="middle">インスタンスタイプ ＝ 部屋の広さ</text>
+        <path d="M646 132c0-8 20-12 44-12s44 4 44 12v108c0 8-20 12-44 12s-44-4-44-12z" style="fill:color-mix(in srgb,var(--c-storage) 12%,var(--surface));stroke:var(--c-storage);stroke-width:2"/>
+        <path d="M646 132c0 8 20 12 44 12s44-4 44-12" style="fill:none;stroke:var(--c-storage);stroke-width:2"/>
+        <text x="690" y="186" text-anchor="middle" style="fill:var(--c-storage);font-size:15px;font-weight:700">EBS</text>
+        <text class="small" x="690" y="206" text-anchor="middle">ディスク</text>
+        <text class="small" x="690" y="282" text-anchor="middle">荷物を置く棚</text>
+        <path class="wire" d="M616 192H642"/>
+        <!-- sizes -->
+        <text class="lbl" x="876" y="120" text-anchor="middle">サイズを選べる</text>
+        <rect x="796" y="240" width="32" height="32" rx="4" style="fill:color-mix(in srgb,var(--c-compute) 30%,var(--surface));stroke:var(--c-compute);stroke-width:1.6"/>
+        <rect x="838" y="218" width="54" height="54" rx="5" style="fill:color-mix(in srgb,var(--c-compute) 45%,var(--surface));stroke:var(--c-compute);stroke-width:1.6"/>
+        <rect x="902" y="172" width="70" height="100" rx="6" style="fill:color-mix(in srgb,var(--c-compute) 65%,var(--surface));stroke:var(--c-compute);stroke-width:1.6"/>
+        <text class="small" x="812" y="292" text-anchor="middle">小</text>
+        <text class="small" x="865" y="292" text-anchor="middle">中</text>
+        <text class="small" x="937" y="292" text-anchor="middle">大</text>
+        <text class="tiny" x="812" y="314" text-anchor="middle">月500円程度</text>
+        <text class="tiny" x="937" y="314" text-anchor="middle">1時間で千円超</text>
+      </svg>
+      </div>
+      <figcaption>インスタンスは「借りた作業部屋」。部屋の広さ（性能）、初期レイアウト（OS）、棚（ディスク）、入口のルール（通信の許可）を選んで使います。</figcaption>
+    </figure>
+    <div class="grid3">
+      <div class="panel">
+        <h3>お金がかかるのは「起動中」</h3>
+        <div class="states">
+          <div class="state on"><span class="coin">¥¥¥</span><b>起動中</b><small>何もしなくても<br>ずっと課金</small></div>
+          <div class="state stop"><span class="coin">¥</span><b>停止</b><small>実行料金0<br>EBS代は残る</small></div>
+          <div class="state del"><span class="coin">0</span><b>削除</b><small>料金なし<br>データも消える</small></div>
+        </div>
+        <p class="note">コインパーキングに車を止めっぱなしと同じ。使い終わったら止める、不要なら消す。</p>
+      </div>
+      <div class="panel">
+        <h3>何に使う？</h3>
+        <div class="uses">
+          <div class="use"><i>WEB</i>Webサイト</div>
+          <div class="use"><i>API</i>APIサーバー</div>
+          <div class="use"><i>BATCH</i>定期処理</div>
+          <div class="use"><i>APP</i>業務アプリ</div>
+          <div class="use"><i>ML</i>分析・機械学習</div>
+          <div class="use"><i>GAME</i>ゲームサーバー</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>自分のPCとの違い</h3>
+        <table class="cmp">
+          <thead><tr><th></th><th>自分のPC</th><th class="c1">EC2</th></tr></thead>
+          <tbody>
+            <tr><th>使える人</th><td>自分だけ</td><td><b>世界中の誰でも</b></td></tr>
+            <tr><th>電源</th><td>使う時だけ</td><td><b>24時間ON</b></td></tr>
+            <tr><th>料金</th><td>買い切り</td><td><b>使った分だけ</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="oneliner"><b>まとめ</b>「サーバーが必要？ じゃあEC2」くらいの理解でOK。</div>
+  </div>
+</section>
+
+<!-- ================= S3 ================= -->
+<section id="s3" class="svc cat-storage">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-s3"/></svg></div>
+    <div class="tag">02 ・ 置く</div>
+    <h2><span class="en">S3</span><span class="ja">なんでも置ける倉庫</span></h2>
+    <p>画像・動画・PDF・CSV・ログ…どんなファイルも保存できるネット上のフォルダ。EC2が「動く場所」なら、S3は「置く場所」です。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>バケットの中身と「見せたい人にだけ見せる」</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 330" role="img" aria-label="S3バケットの中に公開フォルダと非公開フォルダがあり、インターネットの誰でもは公開フォルダだけ見られ、IAMで許可された人やアプリは非公開フォルダも読み書きできる">
+        <use href="#i-user" x="68" y="128" width="44" height="48" style="color:var(--muted)"/>
+        <text class="small" x="90" y="198" text-anchor="middle">インターネットの</text>
+        <text class="small" x="90" y="216" text-anchor="middle">誰でも</text>
+        <rect x="330" y="30" width="300" height="280" rx="18" style="fill:color-mix(in srgb,var(--c-storage) 6%,var(--surface));stroke:var(--c-storage);stroke-width:2.4"/>
+        <text x="350" y="60" style="fill:var(--c-storage);font-size:15px;font-weight:700">バケット：my-awesome-bucket</text>
+        <rect x="354" y="80" width="252" height="96" rx="12" style="fill:color-mix(in srgb,var(--ok) 12%,var(--surface));stroke:var(--ok);stroke-width:1.6"/>
+        <text class="ink mono" x="374" y="110" style="font-size:15px;font-weight:600">images/</text>
+        <text class="small mono" x="390" y="134">└ neko.jpg</text>
+        <text x="374" y="160" style="fill:var(--ok);font-size:13px;font-weight:700">公開OK（Web用の画像）</text>
+        <rect x="354" y="194" width="252" height="96" rx="12" style="fill:color-mix(in srgb,var(--c-sec) 10%,var(--surface));stroke:var(--c-sec);stroke-width:1.6"/>
+        <text class="ink mono" x="374" y="224" style="font-size:15px;font-weight:600">private/</text>
+        <text class="small mono" x="390" y="248">└ 売上.csv</text>
+        <text x="374" y="274" style="fill:var(--c-sec);font-size:13px;font-weight:700">非公開（IAMで制限）</text>
+        <g transform="translate(566 212)"><rect x="0" y="10" width="24" height="18" rx="3" style="fill:var(--c-sec)"/><path d="M5 10V6a7 7 0 0114 0v4" style="fill:none;stroke:var(--c-sec);stroke-width:2.4"/></g>
+        <path class="wire ok" d="M124 140C220 140 250 128 350 128" marker-end="url(#ahok)"/>
+        <text class="okt" x="236" y="122" text-anchor="middle" style="font-size:14px">✓ 見られる</text>
+        <path class="wire ng dash" d="M124 172C220 172 250 242 330 242"/>
+        <text class="ngt" x="186" y="230" text-anchor="middle" style="font-size:14px">✕ 見られない</text>
+        <use href="#i-user" x="826" y="206" width="44" height="48" style="color:var(--c-sec)"/>
+        <rect x="864" y="196" width="40" height="20" rx="10" style="fill:var(--c-sec)"/>
+        <text x="884" y="210" text-anchor="middle" style="fill:var(--surface);font-size:11px;font-weight:700">IAM</text>
+        <text class="small" x="848" y="276" text-anchor="middle">許可された</text>
+        <text class="small" x="848" y="294" text-anchor="middle">人・アプリ</text>
+        <path class="wire ok" d="M816 236H610" marker-end="url(#ahok)"/>
+        <text class="okt" x="712" y="226" text-anchor="middle" style="font-size:14px">✓ 読める・書ける</text>
+      </svg>
+      </div>
+      <figcaption>設定ミスでファイルが全世界に丸見えになる事故は実際に起きています。公開するものだけを明確に公開し、それ以外はIAMで制限します。</figcaption>
+    </figure>
+    <div class="grid3">
+      <div class="panel">
+        <h3>中身の構造</h3>
+<pre class="tree"><span class="b">my-awesome-bucket</span> <span class="m">← バケット</span>
+├── images/
+│   └── neko.jpg  <span class="m">← オブジェクト</span>
+└── pdf/
+    └── catalog.pdf</pre>
+        <p class="note">フォルダに見えるのは、ファイル名に「/」を入れて階層っぽく見せているだけです。</p>
+      </div>
+      <div class="panel">
+        <h3>ライフサイクルで自動整理</h3>
+        <div class="timeline">
+          <div class="tstep"><span class="dot">0日</span><b>保存</b><small>標準ストレージ</small></div>
+          <div class="tstep"><span class="dot">30</span><b>安い棚へ</b><small>あまり使わない<br>データを移動</small></div>
+          <div class="tstep"><span class="dot">90</span><b>自動で削除</b><small>古いログなどを<br>片付け</small></div>
+        </div>
+        <p class="note">「バージョニング」を有効にすると、上書きしても過去のファイルを残せます。</p>
+      </div>
+      <div class="panel">
+        <h3>ここがすごい ／ 使い道</h3>
+        <div class="chips">
+          <span class="chip">消えない（高耐久）</span><span class="chip">どこからでも</span><span class="chip">安い</span><span class="chip">URLで共有</span>
+          <span class="chip">画像・CSS置き場</span><span class="chip">静的サイト公開</span><span class="chip">バックアップ・ログ</span>
+        </div>
+      </div>
+    </div>
+    <div class="oneliner"><b>まとめ</b>何かを置いてあるところは、だいたいS3。</div>
+  </div>
+</section>
+
+<!-- ================= RDS ================= -->
+<section id="rds" class="svc cat-db">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-rds"/></svg></div>
+    <div class="tag">03 ・ 記録する</div>
+    <h2><span class="en">RDS</span><span class="ja">おまかせDB屋さん</span></h2>
+    <p>インストール、バックアップ、障害対応、パッチ適用など、データベースの面倒な管理をAWSが代わりにやってくれるサービスです。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>だれが何を管理する？ EC2に自前でDBを入れる場合とRDSの比較</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 420" role="img" aria-label="EC2に自前でDBを入れるとOSからデータ設計まで6つの作業を自分で管理するが、RDSではバックアップ、パッチ、インストール、OS、ハードウェアをAWSが管理し、自分はデータ設計とクエリだけを担当する">
+        <text class="ink" x="250" y="30" text-anchor="middle" style="font-size:17px;font-weight:700">EC2 ＋ 自前のDB</text>
+        <text x="710" y="30" text-anchor="middle" style="fill:var(--c-db);font-size:17px;font-weight:700">RDS</text>
+        <!-- rows: y=50+52i -->
+        <g style="font-size:15px">
+        <rect x="60" y="50" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 22%,var(--surface))"/><text class="ink" x="80" y="78">データ・テーブル設計</text><text x="424" y="78" text-anchor="end" style="fill:var(--c-compute);font-weight:700">あなた</text>
+        <rect x="60" y="102" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 22%,var(--surface))"/><text class="ink" x="80" y="130">クエリの改善</text><text x="424" y="130" text-anchor="end" style="fill:var(--c-compute);font-weight:700">あなた</text>
+        <rect x="60" y="154" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 22%,var(--surface))"/><text class="ink" x="80" y="182">バックアップ</text><text x="424" y="182" text-anchor="end" style="fill:var(--c-compute);font-weight:700">あなた</text>
+        <rect x="60" y="206" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 22%,var(--surface))"/><text class="ink" x="80" y="234">パッチ適用・障害復旧</text><text x="424" y="234" text-anchor="end" style="fill:var(--c-compute);font-weight:700">あなた</text>
+        <rect x="60" y="258" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 22%,var(--surface))"/><text class="ink" x="80" y="286">DBのインストール</text><text x="424" y="286" text-anchor="end" style="fill:var(--c-compute);font-weight:700">あなた</text>
+        <rect x="60" y="310" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 22%,var(--surface))"/><text class="ink" x="80" y="338">OS</text><text x="424" y="338" text-anchor="end" style="fill:var(--c-compute);font-weight:700">あなた</text>
+        <rect x="60" y="362" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-db) 20%,var(--surface))"/><text class="ink" x="80" y="390">サーバー・ハードウェア</text><text x="424" y="390" text-anchor="end" style="fill:var(--c-db);font-weight:700">AWS</text>
+
+        <rect x="520" y="50" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 22%,var(--surface))"/><text class="ink" x="540" y="78">データ・テーブル設計</text><text x="884" y="78" text-anchor="end" style="fill:var(--c-compute);font-weight:700">あなた</text>
+        <rect x="520" y="102" width="380" height="44" rx="8" style="fill:color-mix(in srgb,var(--c-compute) 22%,var(--surface))"/><text class="ink" x="540" y="130">クエリの改善</text><text x="884" y="130" text-anchor="end" style="fill:var(--c-compute);font-weight:700">あなた</text>
+        <rect x="520" y="154" width="380" height="252" rx="10" style="fill:color-mix(in srgb,var(--c-db) 20%,var(--surface));stroke:var(--c-db);stroke-width:2"/>
+        <text class="ink" x="540" y="182">バックアップ（自動）</text>
+        <text class="ink" x="540" y="234">パッチ適用・障害復旧</text>
+        <text class="ink" x="540" y="286">DBのインストール</text>
+        <text class="ink" x="540" y="338">OS</text>
+        <text class="ink" x="540" y="390">サーバー・ハードウェア</text>
+        <text x="884" y="290" text-anchor="end" style="fill:var(--c-db);font-weight:700;font-size:20px">AWSに</text>
+        <text x="884" y="316" text-anchor="end" style="fill:var(--c-db);font-weight:700;font-size:20px">おまかせ</text>
+        </g>
+        <path d="M454 280H506" style="fill:none;stroke:var(--c-db);stroke-width:3" marker-end="url(#ah)"/>
+      </svg>
+      </div>
+      <figcaption>RDSなら自分が気にするのは「データそのもの」だけ。その分コストはやや高め、OSレベルの細かい調整はできません。</figcaption>
+    </figure>
+    <div class="grid3">
+      <div class="panel">
+        <h3>どっちを選ぶ？</h3>
+        <table class="cmp">
+          <thead><tr><th></th><th class="c1">RDS</th><th>EC2＋DB</th></tr></thead>
+          <tbody>
+            <tr><th>手間</th><td><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></span></td><td><span class="dots g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+            <tr><th>自由度</th><td><span class="dots"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></td><td><span class="dots g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+            <tr><th>費用</th><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="dots g"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+            <tr><th>向く人</th><td><b>初心者〜中級</b></td><td>中級者以上</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>選べるデータベース</h3>
+        <div class="chips">
+          <span class="chip">MySQL</span><span class="chip">PostgreSQL</span><span class="chip">MariaDB</span><span class="chip">Oracle</span><span class="chip">SQL Server</span><span class="chip star">Aurora（AWS独自）</span>
+        </div>
+        <p class="note">作成すると「エンドポイント」というURLがもらえ、アプリに設定するだけでつながります。</p>
+<pre class="code">mysql -h your-db-endpoint.rds.amazonaws.com -u user -p</pre>
+      </div>
+      <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>よくある注意ポイント</b>
+        <ul><li>起動しっぱなしで課金され続ける</li><li>テスト中に「パブリックアクセスON」のまま</li><li>小さすぎると遅い、大きすぎるとお金が溶ける</li></ul></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= IAM ================= -->
+<section id="iam" class="svc cat-sec">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-iam"/></svg></div>
+    <div class="tag">04 ・ 守る</div>
+    <h2><span class="en">IAM</span><span class="ja">入退室管理・通行証</span></h2>
+    <p>Identity and Access Management。日本では「アイアム」と呼ばれます。AWSの鍵と通行証をまとめて管理する仕組みです。</p>
+  </header>
+  <div class="sbody">
+    <div class="panel">
+      <div class="formula">
+        <div class="fpart"><b>誰が</b><small>ユーザー・サービス</small></div>
+        <span class="fop">×</span>
+        <div class="fpart"><b>どこに</b><small>EC2・S3・RDS…</small></div>
+        <span class="fop">×</span>
+        <div class="fpart"><b>どこまで</b><small>読むだけ／編集OK／削除NG</small></div>
+      </div>
+    </div>
+    <figure class="fig">
+      <div class="fig-head"><h3>ポリシーで「必要な操作だけ」を許可する</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 330" role="img" aria-label="インターンにはS3のreportsフォルダを読むだけのポリシーを付け、EC2は操作できない。EC2上のアプリにはロールでS3のresultsフォルダへの書き込みだけを許可し、請求情報は見られない">
+        <!-- identities -->
+        <g class="node cat-sec"><rect x="30" y="66" width="200" height="78" rx="12"/></g>
+        <use href="#i-user" x="48" y="84" width="36" height="40" style="color:var(--c-sec)"/>
+        <text class="ink" x="98" y="100" style="font-size:16px;font-weight:700">インターン</text>
+        <text class="small" x="98" y="122">IAMユーザー</text>
+        <g class="node cat-compute"><rect x="30" y="206" width="200" height="78" rx="12"/></g>
+        <rect x="46" y="226" width="40" height="34" rx="5" style="fill:none;stroke:var(--c-compute);stroke-width:2"/>
+        <rect x="70" y="250" width="24" height="16" rx="8" style="fill:var(--c-sec)"/>
+        <text class="ink" x="104" y="240" style="font-size:16px;font-weight:700">EC2上のアプリ</text>
+        <text class="small" x="104" y="262">IAMロールを付与</text>
+        <!-- policies -->
+        <rect x="300" y="56" width="290" height="98" rx="12" style="fill:color-mix(in srgb,var(--c-sec) 9%,var(--surface));stroke:var(--c-sec);stroke-width:1.8"/>
+        <text x="318" y="82" style="fill:var(--c-sec);font-size:13px;font-weight:700">ポリシーA（JSON）</text>
+        <text class="ink mono" x="318" y="110" style="font-size:14px">Allow: s3:GetObject</text>
+        <text class="small mono" x="318" y="134">対象: reports/* だけ</text>
+        <rect x="300" y="196" width="290" height="98" rx="12" style="fill:color-mix(in srgb,var(--c-sec) 9%,var(--surface));stroke:var(--c-sec);stroke-width:1.8"/>
+        <text x="318" y="222" style="fill:var(--c-sec);font-size:13px;font-weight:700">ポリシーB（ロール用）</text>
+        <text class="ink mono" x="318" y="250" style="font-size:14px">Allow: s3:PutObject</text>
+        <text class="small mono" x="318" y="274">対象: results/* だけ</text>
+        <path class="wire" d="M230 105H296" marker-end="url(#ah)"/>
+        <path class="wire" d="M230 245H296" marker-end="url(#ah)"/>
+        <!-- resources -->
+        <g class="node cat-compute"><rect x="700" y="30" width="230" height="60" rx="10"/><text class="nt" x="815" y="67">EC2の操作</text></g>
+        <g class="node cat-storage"><rect x="700" y="135" width="230" height="60" rx="10"/><text class="nt" x="815" y="172">S3バケット</text></g>
+        <g class="node cat-geo"><rect x="700" y="240" width="230" height="60" rx="10"/><text class="nt" x="815" y="277">請求情報</text></g>
+        <path class="wire ng dash" d="M590 88C640 88 650 60 696 60"/>
+        <path class="wire ok" d="M590 122C640 122 650 158 696 158" marker-end="url(#ahok)"/>
+        <path class="wire ok" d="M590 228C640 228 650 174 696 174" marker-end="url(#ahok)"/>
+        <path class="wire ng dash" d="M590 262C640 262 650 270 696 270"/>
+        <g><circle cx="643" cy="72" r="13" style="fill:var(--surface);stroke:var(--ng);stroke-width:2"/><text class="ngt" x="643" y="77" text-anchor="middle" style="font-size:14px">✕</text></g>
+        <g><circle cx="643" cy="140" r="13" style="fill:var(--surface);stroke:var(--ok);stroke-width:2"/><text class="okt" x="643" y="145" text-anchor="middle" style="font-size:14px">✓</text></g>
+        <g><circle cx="643" cy="200" r="13" style="fill:var(--surface);stroke:var(--ok);stroke-width:2"/><text class="okt" x="643" y="205" text-anchor="middle" style="font-size:14px">✓</text></g>
+        <g><circle cx="643" cy="266" r="13" style="fill:var(--surface);stroke:var(--ng);stroke-width:2"/><text class="ngt" x="643" y="271" text-anchor="middle" style="font-size:14px">✕</text></g>
+      </svg>
+      </div>
+      <figcaption>「その人（またはサービス）に必要な最小限の権限だけを渡す」のがIAMの基本ルール（最小権限の原則）。書いていない操作はすべて拒否されます。</figcaption>
+    </figure>
+    <div class="grid3">
+      <div class="panel">
+        <h3>4つの部品</h3>
+        <div class="elements">
+          <div class="tile"><span class="k">USER</span><b>ユーザー</b><span>使う人のID</span></div>
+          <div class="tile"><span class="k">GROUP</span><b>グループ</b><span>ユーザーをまとめる箱</span></div>
+          <div class="tile"><span class="k">POLICY</span><b>ポリシー</b><span>できることのルール</span></div>
+          <div class="tile"><span class="k">ROLE</span><b>ロール</b><span>サービスに渡す仮の身分証</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>ポリシーの中身（ポリシーAの例）</h3>
+<pre class="code">{
+  <span class="k">"Effect"</span>: "Allow",
+  <span class="k">"Action"</span>: "s3:GetObject",
+  <span class="k">"Resource"</span>:
+    "arn:aws:s3:::my-bucket/reports/*"
+}</pre>
+      </div>
+      <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>初心者がやりがちなNG</b>
+        <ul><li>全員に AdministratorAccess を付ける</li><li>よく分からず <code>s3:*</code>（全権限）と書く</li><li>アクセスキーの流出に気づかない</li></ul></div></div>
+    </div>
+    <div class="oneliner"><b>まとめ</b>AWSは高性能で破壊力もある道具。最初にIAMを整えるのが大人のたしなみ。</div>
+  </div>
+</section>
+
+<!-- ================= CloudWatch ================= -->
+<section id="cloudwatch" class="svc cat-ops">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-cw"/></svg></div>
+    <div class="tag">05 ・ 見張る</div>
+    <h2><span class="en">CloudWatch</span><span class="ja">監視カメラ＆健康診断</span></h2>
+    <p>「サーバー落ちてない？」「CPU使いすぎてない？」をずっと見守り、異常があれば知らせてくれる見張り番です。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>データが集まり、異常を知らせるまでの流れ</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 270" role="img" aria-label="EC2、RDS、Lambda、自作アプリから数値とログがCloudWatchに集まり、アラームがSlackやメールに通知し、ダッシュボードで共有される">
+        <g class="node cat-compute"><rect x="30" y="16" width="160" height="50" rx="10"/><text class="nt" x="110" y="47" style="font-size:15px">EC2 <tspan class="ns">CPU使用率</tspan></text></g>
+        <g class="node cat-db"><rect x="30" y="78" width="160" height="50" rx="10"/><text class="nt" x="110" y="109" style="font-size:15px">RDS <tspan class="ns">接続数</tspan></text></g>
+        <g class="node cat-compute"><rect x="30" y="140" width="160" height="50" rx="10"/><text class="nt" x="110" y="171" style="font-size:15px">Lambda <tspan class="ns">エラー数</tspan></text></g>
+        <g class="node cat-geo"><rect x="30" y="202" width="160" height="50" rx="10"/><text class="nt" x="110" y="233" style="font-size:15px">アプリ <tspan class="ns">ログ</tspan></text></g>
+        <path class="wire" d="M190 41C240 41 250 120 296 124"/>
+        <path class="wire" d="M190 103C240 103 250 126 296 128"/>
+        <path class="wire" d="M190 165C240 165 250 132 296 132"/>
+        <path class="wire" d="M190 227C240 227 250 136 296 136" marker-end="url(#ah)"/>
+        <text class="small" x="246" y="22" text-anchor="middle">数値・ログ</text>
+        <g class="node cat-ops solid"><rect x="300" y="80" width="200" height="110" rx="14"/><text class="nt" x="400" y="128" style="font-size:19px">CloudWatch</text><text class="ns" x="400" y="154">集める・見える化</text></g>
+        <path class="wire" d="M500 112C540 112 540 70 576 70" marker-end="url(#ah)"/>
+        <path class="wire" d="M500 160C540 160 540 200 576 200" marker-end="url(#ah)"/>
+        <g class="node cat-sec"><rect x="580" y="38" width="170" height="64" rx="10"/><text class="nt" x="665" y="66">アラーム</text><text class="ns" x="665" y="88">CPU 80%超えたら</text></g>
+        <g class="node cat-ops"><rect x="580" y="168" width="170" height="64" rx="10"/><text class="nt" x="665" y="196">ダッシュボード</text><text class="ns" x="665" y="218">グラフで共有</text></g>
+        <path class="wire" d="M750 70H786" marker-end="url(#ah)"/>
+        <text class="small" x="768" y="60" text-anchor="middle">通知</text>
+        <g class="node cat-geo"><rect x="790" y="38" width="150" height="64" rx="10"/><text class="nt" x="865" y="66">Slack・メール</text><text class="ns" x="865" y="88">担当者が気づく</text></g>
+        <path class="wire dash" d="M865 102V180H754" marker-end="url(#ah)"/>
+        <text class="small" x="870" y="150">原因を</text>
+        <text class="small" x="870" y="168">グラフで確認</text>
+      </svg>
+      </div>
+    </figure>
+    <div class="grid2">
+      <figure class="fig">
+        <div class="fig-head"><h3>例：CPU使用率が80%を超えた瞬間にアラーム</h3></div>
+        <svg viewBox="0 0 540 250" role="img" aria-label="CPU使用率の折れ線グラフ。午後に80%のしきい値を超えた時点でアラームが鳴る" style="display:block;width:100%;height:auto">
+          <line x1="56" y1="20" x2="520" y2="20" style="stroke:var(--line)"/>
+          <line x1="56" y1="100" x2="520" y2="100" style="stroke:var(--line)"/>
+          <line x1="56" y1="180" x2="520" y2="180" style="stroke:var(--muted)"/>
+          <text class="small" x="46" y="25" text-anchor="end">100</text>
+          <text class="small" x="46" y="105" text-anchor="end">50</text>
+          <text class="small" x="46" y="185" text-anchor="end">0</text>
+          <text class="small" x="46" y="57" text-anchor="end" style="fill:var(--ng);font-weight:700">80</text>
+          <line x1="56" y1="52" x2="520" y2="52" style="stroke:var(--ng);stroke-width:1.6;stroke-dasharray:6 4"/>
+          <text class="small" x="62" y="45" style="fill:var(--ng)">しきい値 80%</text>
+          <path d="M60 180L60 128.8L100 124L140 132L180 114.4L220 119.2L260 108L300 96.8L340 84L380 64.8L420 42.4L460 34.4L500 77.6L500 180Z" style="fill:var(--c);fill-opacity:.16"/>
+          <polyline points="60,128.8 100,124 140,132 180,114.4 220,119.2 260,108 300,96.8 340,84 380,64.8 420,42.4 460,34.4 500,77.6" style="fill:none;stroke:var(--c);stroke-width:3;stroke-linejoin:round"/>
+          <circle cx="420" cy="42.4" r="7" style="fill:var(--ng)"/>
+          <circle cx="420" cy="42.4" r="13" style="fill:none;stroke:var(--ng);stroke-width:1.6"/>
+          <path d="M420 29V12H346" style="fill:none;stroke:var(--ng);stroke-width:1.4"/>
+          <rect x="236" y="0" width="110" height="24" rx="12" style="fill:var(--ng)"/>
+          <text class="pilltxt" x="291" y="17">アラーム → 通知</text>
+          <text class="small" x="60" y="204" text-anchor="middle">9:00</text>
+          <text class="small" x="280" y="204" text-anchor="middle">12:00</text>
+          <text class="small" x="500" y="204" text-anchor="middle">15:00</text>
+          <text class="small" x="56" y="238">CPU使用率（%）・EC2インスタンス</text>
+        </svg>
+      </figure>
+      <div class="stack">
+        <div class="panel">
+          <h3>主な機能</h3>
+          <div class="elements">
+            <div class="tile"><span class="k">METRICS</span><b>メトリクス</b><span>数値で見る</span></div>
+            <div class="tile"><span class="k">ALARM</span><b>アラーム</b><span>条件で通知</span></div>
+            <div class="tile"><span class="k">LOGS</span><b>ログ</b><span>エラーを検索</span></div>
+            <div class="tile"><span class="k">DASHBOARD</span><b>ダッシュボード</b><span>グラフで共有</span></div>
+          </div>
+          <p class="note">EventBridge（旧CloudWatch Events）と組み合わせると「毎月1日にバッチ起動」なども自動化できます。</p>
+        </div>
+        <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>あるある</b>
+          <ul><li>アラーム未設定で、いつの間にかサーバーが落ちている</li><li>ログが無限に貯まって料金が増える → 保存期間を設定</li></ul></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Lambda ================= -->
+<section id="lambda" class="svc cat-compute">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-lambda"/></svg></div>
+    <div class="tag">06 ・ 動かす（サーバーレス）</div>
+    <h2><span class="en">Lambda</span><span class="ja">呼ばれた時だけ働くアルバイト</span></h2>
+    <p>サーバーを用意せず、コードだけ置いておけば「何かが起きた時」に自動で実行されます。サーバーは裏にありますが、管理はAWSにおまかせ。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>例：CSVをアップロードしたら、自動でデータベースに登録</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 240" role="img" aria-label="S3にCSVがアップロードされるとLambdaが自動で起動してCSVを加工し、RDSに登録し、実行ログをCloudWatchに記録する">
+        <g class="node cat-storage"><rect x="30" y="50" width="180" height="84" rx="12"/><text class="nt" x="120" y="86">S3</text><text class="ns" x="120" y="110">CSVをアップロード</text></g>
+        <path class="wire" d="M210 92H306" marker-end="url(#ah)"/>
+        <text class="small" x="258" y="82" text-anchor="middle">きっかけ</text>
+        <text class="tiny" x="258" y="112" text-anchor="middle">（トリガー）</text>
+        <g class="node cat-compute solid"><rect x="310" y="36" width="220" height="112" rx="14"/><text class="nt" x="420" y="80" style="font-size:20px">Lambda</text><text class="ns" x="420" y="106">自動で起動</text><text class="ns" x="420" y="126">CSVを加工</text></g>
+        <path class="wire" d="M530 92H626" marker-end="url(#ah)"/>
+        <text class="small" x="578" y="82" text-anchor="middle">データ登録</text>
+        <g class="node cat-db"><rect x="630" y="50" width="160" height="84" rx="12"/><text class="nt" x="710" y="86">RDS</text><text class="ns" x="710" y="110">注文データ</text></g>
+        <path class="wire dash" d="M420 148V196H866V150" marker-end="url(#ah)"/>
+        <text class="small" x="640" y="188" text-anchor="middle">実行ログを記録</text>
+        <g class="node cat-ops"><rect x="806" y="66" width="130" height="80" rx="12"/><text class="nt" x="871" y="100">CloudWatch</text><text class="ns" x="871" y="124">ログ</text></g>
+        <text class="tiny" x="420" y="226" text-anchor="middle">処理が終わったら即終了。待っている間はお金がかからない</text>
+      </svg>
+      </div>
+      <figcaption>Power Automate のクラウドフローに近い感覚です（トリガー → 条件 → 自動実行）。EC2が「常駐社員」なら、Lambdaは「呼ばれた時だけ働くアルバイト」。</figcaption>
+    </figure>
+    <div class="grid2">
+      <div class="panel">
+        <h3>料金のかかり方（1日のイメージ）</h3>
+        <div class="bill">
+          <div class="billrow"><b>EC2</b><div class="bar"><div class="full"></div><span class="t">ずっと課金</span></div></div>
+          <div class="billrow"><b>Lambda</b><div class="bar">
+            <div class="spike" style="left:6%"></div><div class="spike" style="left:8.6%"></div><div class="spike" style="left:31%"></div><div class="spike" style="left:52%"></div><div class="spike" style="left:54.4%"></div><div class="spike" style="left:72%"></div>
+            <span class="t">動いた瞬間だけ</span></div></div>
+          <div class="axis"><span>0時</span><span>6時</span><span>12時</span><span>18時</span><span>24時</span></div>
+        </div>
+        <p class="note">実行時間 × リクエスト回数で課金（ミリ秒単位）。月100万リクエストまでは無料枠あり。「たまにしか動かない処理」ほどお得。</p>
+      </div>
+      <div class="stack">
+        <div class="panel">
+          <h3>よく組み合わせる仲間</h3>
+          <div class="chips">
+            <span class="chip">S3：アップロードで起動</span><span class="chip">API Gateway：API化</span><span class="chip">EventBridge：定期実行</span><span class="chip">DynamoDB：保存先</span><span class="chip">Step Functions：手順を管理</span>
+          </div>
+        </div>
+        <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>ここ気をつけて</b>
+          <ul><li>1回の実行は最大15分まで。長い処理は分割を</li><li>タイムアウト設定ミスで処理が途中で落ちる</li><li>ライブラリが多いとZIPが大きくなる → レイヤー機能で分離</li></ul></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CloudFront ================= -->
+<section id="cloudfront" class="svc cat-net">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-cf"/></svg></div>
+    <div class="tag">07 ・ 届ける</div>
+    <h2><span class="en">CloudFront</span><span class="ja">世界中にある配送センター</span></h2>
+    <p>AWSのCDN（コンテンツ配信ネットワーク）。世界中の「エッジロケーション」にコピーを置き、利用者の近くから届けます。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>東京のS3にあるファイルを、世界中のエッジから配る</h3><span>拠点はイメージ。実際は世界中に数百か所以上</span></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 440" role="img" aria-label="東京のS3を元データとして、サンパウロ、ニューヨーク、ロンドン、ムンバイ、シドニーのエッジにキャッシュを置き、各地の利用者は近くのエッジから受け取る世界地図">
+        <path class="land" d="M64 32 L133 35 L213 42 L253 26 L280 60 L331 91 L315 112 L293 125 L277 143 L267 174 L240 158 L221 171 L227 195 L245 202 L269 223 L259 226 L232 205 L200 189 L168 155 L149 128 L147 103 L115 72 L88 66 L45 82 L40 66 L32 48Z M288 214 L315 220 L341 235 L387 266 L379 291 L368 322 L339 355 L315 374 L299 411 L293 420 L280 392 L288 352 L291 306 L264 266 L267 245 L275 226Z M456 140 L456 118 L467 103 L485 94 L501 85 L501 75 L496 72 L493 57 L533 35 L555 32 L587 38 L627 26 L693 26 L760 20 L827 26 L907 35 L960 48 L955 60 L915 66 L896 75 L856 91 L861 69 L843 85 L832 118 L821 131 L819 143 L805 131 L805 155 L784 183 L768 186 L765 220 L760 223 L747 211 L757 248 L741 226 L741 202 L720 183 L709 189 L685 226 L675 192 L659 174 L632 174 L608 158 L616 177 L637 183 L600 211 L565 158 L576 137 L557 125 L544 137 L533 128 L515 112 L520 128 L523 134 L501 115 L488 118 L480 128 L464 140Z M464 143 L507 137 L509 149 L533 152 L565 155 L579 183 L597 214 L616 217 L589 257 L587 282 L573 328 L549 355 L528 355 L517 322 L515 288 L512 266 L504 238 L469 235 L456 235 L440 220 L435 205 L435 186 L445 165Z M829 288 L859 285 L869 306 L888 337 L875 368 L853 368 L835 349 L792 358 L784 318 L819 294Z M827 155 L827 146 L835 143 L845 137 L853 128 L856 125 L859 112 L867 118 L861 122 L859 131 L853 143 L845 146 L840 149Z M467 97 L469 91 L467 82 L467 72 L472 72 L477 82 L480 88 L483 94Z M363 66 L384 48 L421 35 L427 20 L320 20 L336 35 L341 51Z M733 235 L763 269 L787 275 L813 275 L840 263 L856 275 L856 257 L829 251 L795 245 L792 232 L771 248 L760 260Z"/>
+        <!-- edge -> origin (first time) -->
+        <g style="fill:none;stroke:var(--c-net);stroke-width:1.6;stroke-dasharray:3 5;stroke-opacity:.8">
+          <path d="M356 323Q600 160 853 141"/>
+          <path d="M283 126Q560 40 853 141"/>
+          <path d="M480 92Q680 60 853 141"/>
+          <path d="M674 192Q770 150 853 141"/>
+          <path d="M883 355Q900 250 853 141"/>
+        </g>
+        <!-- users -> edge -->
+        <g style="fill:none;stroke:var(--ok);stroke-width:3">
+          <path d="M318 360L352 327"/><path d="M246 160L279 130"/><path d="M444 120L476 96"/><path d="M640 226L670 196"/><path d="M846 390L879 359"/>
+        </g>
+        <g style="color:var(--ok)">
+          <use href="#i-user" x="303" y="358" width="22" height="24"/><use href="#i-user" x="231" y="158" width="22" height="24"/><use href="#i-user" x="429" y="118" width="22" height="24"/><use href="#i-user" x="625" y="224" width="22" height="24"/><use href="#i-user" x="831" y="388" width="22" height="24"/>
+        </g>
+        <!-- edges -->
+        <g style="fill:var(--c-net);stroke:var(--surface);stroke-width:3">
+          <circle cx="356" cy="323" r="9"/><circle cx="283" cy="126" r="9"/><circle cx="480" cy="92" r="9"/><circle cx="674" cy="192" r="9"/><circle cx="883" cy="355" r="9"/>
+        </g>
+        <g style="font-size:14px;font-weight:700;fill:var(--c-net)">
+          <text x="372" y="318">サンパウロ</text>
+          <text x="300" y="146">ニューヨーク</text>
+          <text x="470" y="80" text-anchor="end">ロンドン</text>
+          <text x="690" y="216">ムンバイ</text>
+          <text x="872" y="388" text-anchor="end">シドニー</text>
+        </g>
+        <!-- origin -->
+        <circle cx="853" cy="141" r="16" style="fill:var(--c-storage);stroke:var(--surface);stroke-width:3"/>
+        <text x="853" y="146" text-anchor="middle" style="fill:var(--surface);font-size:11px;font-weight:700">S3</text>
+        <rect x="770" y="84" width="166" height="30" rx="15" style="fill:var(--c-storage)"/>
+        <text class="pilltxt" x="853" y="104">東京のS3（元データ）</text>
+        <!-- legend -->
+        <g transform="translate(24 380)">
+          <rect x="0" y="0" width="250" height="52" rx="10" style="fill:var(--surface);stroke:var(--line)"/>
+          <line x1="14" y1="18" x2="44" y2="18" style="stroke:var(--ok);stroke-width:3"/><text class="small" x="52" y="23">近くのエッジから受け取る</text>
+          <line x1="14" y1="38" x2="44" y2="38" style="stroke:var(--c-net);stroke-width:1.6;stroke-dasharray:3 5"/><text class="small" x="52" y="43">初回だけ東京へ取りに行く</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>最初のアクセスでエッジにコピー（キャッシュ）が作られ、2回目以降は近くのエッジから配信。「近くにあるっぽく見せかける」ことで速くなります。</figcaption>
+    </figure>
+    <div class="panel">
+      <h3>ブラジルから見たときの違い</h3>
+      <div class="route">
+        <div class="tag2">CloudFrontなし <span class="pill slow">遅い</span></div>
+        <div class="pt"><b>ブラジル</b>ユーザー</div>
+        <div class="ln long"><span>海底ケーブルで約1万8千km</span></div>
+        <div class="pt ghost">　</div>
+        <div class="ln long"></div>
+        <div class="pt"><b>東京</b>S3</div>
+      </div>
+      <div class="route">
+        <div class="tag2">CloudFrontあり <span class="pill fast">速い</span></div>
+        <div class="pt"><b>ブラジル</b>ユーザー</div>
+        <div class="ln short"><span>すぐ近く</span></div>
+        <div class="pt edge"><b>サンパウロ</b>エッジ</div>
+        <div class="ln faint"><span>初回だけ取りに行く</span></div>
+        <div class="pt"><b>東京</b>S3</div>
+      </div>
+    </div>
+    <div class="grid2 even">
+      <div class="panel">
+        <h3>定番の組み合わせ：S3 ＋ CloudFront</h3>
+        <div class="chips">
+          <span class="chip">静的サイトをS3に置く</span><span class="chip">CloudFront経由で高速配信</span><span class="chip">HTTPS・独自ドメインOK</span><span class="chip">OACでS3への直アクセスを禁止</span>
+        </div>
+        <p class="note">料金は転送量とリクエスト数の従量課金。無料枠（毎月1TBの転送まで）があるので、小〜中規模ならまず無料で試せます。</p>
+      </div>
+      <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>注意点</b>
+        <ul><li>キャッシュが効いて古い内容が出続ける → キャッシュ無効化（Invalidation）</li><li>HTTPSには証明書が必要 → ACMで無料発行</li><li>設定項目は多いが、S3＋デフォルト設定なら最小限で始められる</li></ul></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Route 53 ================= -->
+<section id="route53" class="svc cat-net">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-r53"/></svg></div>
+    <div class="tag">08 ・ 案内する</div>
+    <h2><span class="en">Route 53</span><span class="ja">名前から住所を教える案内所</span></h2>
+    <p>AWSのDNSサービス。人が読める「ドメイン名」を、コンピューターが分かる「IPアドレス」に変換します。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>ブラウザに example.com と入力してから、ページが表示されるまで</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 330" role="img" aria-label="ブラウザがRoute 53にexample.comの住所を尋ね、Route 53がIPアドレスを答え、ブラウザはそのIPのサーバーにアクセスしてページを受け取る">
+        <g class="node cat-geo"><rect x="40" y="16" width="180" height="56" rx="10"/><text class="nt" x="130" y="51">ブラウザ</text></g>
+        <g class="node cat-net solid"><rect x="390" y="16" width="180" height="56" rx="10"/><text class="nt" x="480" y="51">Route 53</text></g>
+        <g class="node cat-compute"><rect x="740" y="16" width="180" height="56" rx="10"/><text class="nt" x="830" y="44" style="font-size:15px">Webサーバー</text><text class="ns" x="830" y="63">EC2 / CloudFront</text></g>
+        <g style="stroke:var(--line);stroke-width:2;stroke-dasharray:4 5"><line x1="130" y1="72" x2="130" y2="316"/><line x1="480" y1="72" x2="480" y2="316"/><line x1="830" y1="72" x2="830" y2="316"/></g>
+        <path class="wire" d="M136 120H472" marker-end="url(#ah)" style="stroke-width:2.4"/>
+        <text class="ink" x="304" y="108" text-anchor="middle" style="font-size:15px;font-weight:700">example.com はどこ？</text>
+        <path class="wire c" d="M474 180H138" marker-end="url(#ah)" style="stroke:var(--c-net);stroke-width:2.4"/>
+        <text x="304" y="168" text-anchor="middle" style="fill:var(--c-net);font-size:15px;font-weight:700">13.114.123.11 です</text>
+        <text class="tiny" x="304" y="200" text-anchor="middle">（Aレコードを見て答える）</text>
+        <path class="wire" d="M136 246H822" marker-end="url(#ah)" style="stroke-width:2.4"/>
+        <text class="ink" x="480" y="236" text-anchor="middle" style="font-size:15px;font-weight:700">13.114.123.11 にアクセス</text>
+        <path class="wire ok" d="M824 296H138" marker-end="url(#ahok)" style="stroke-width:2.4"/>
+        <text class="okt" x="480" y="286" text-anchor="middle" style="font-size:15px">Webページを返す</text>
+        <g><circle class="badge-n" cx="160" cy="104" r="12"/><text class="badge-t" x="160" y="109">1</text></g>
+        <g><circle class="badge-n" cx="160" cy="164" r="12"/><text class="badge-t" x="160" y="169">2</text></g>
+        <g><circle class="badge-n" cx="160" cy="231" r="12"/><text class="badge-t" x="160" y="236">3</text></g>
+        <g><circle class="badge-n" cx="160" cy="281" r="12"/><text class="badge-t" x="160" y="286">4</text></g>
+      </svg>
+      </div>
+      <figcaption>利用者は「example.com」だけ覚えていればOK。DNSがなければ、毎回 https://123.123.123.123 のように打たないといけません。</figcaption>
+    </figure>
+    <div class="panel">
+      <h3>「レコード」で行き先を決める</h3>
+      <div class="recs">
+        <div class="rec"><b>A</b><span>ドメイン → IPアドレス</span><code>example.com → 13.114.123.11</code></div>
+        <div class="rec"><b>CNAME</b><span>別名へ転送</span><code>www.example.com → example.com</code></div>
+        <div class="rec"><b>MX</b><span>メールサーバーの指定</span><code>メールの届け先</code></div>
+        <div class="rec"><b>TXT</b><span>認証情報など</span><code>SPF / DKIM / Search Console</code></div>
+      </div>
+    </div>
+    <div class="grid2 even">
+      <div class="panel">
+        <h3>できること</h3>
+        <div class="chips">
+          <span class="chip">ドメイン取得・更新</span><span class="chip">名前解決</span><span class="chip">ヘルスチェック</span><span class="chip">障害時に別サーバーへ切替</span><span class="chip">S3・CloudFront・EC2と連携</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>料金の目安</h3>
+        <p style="margin:0;font-size:14px">ホストゾーン1つ <b>約0.5ドル/月</b> ＋ 問い合わせ数に応じた従量課金。1サイト程度なら月数十円〜数百円。</p>
+      </div>
+    </div>
+    <div class="oneliner"><b>鉄板構成</b>ファイルはS3 → 配信はCloudFront → ドメインはRoute 53。これで「https://自分のドメイン」のサイトが完成。</div>
+  </div>
+</section>
+
+<!-- ================= Lightsail ================= -->
+<section id="lightsail" class="svc cat-compute">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-ls"/></svg></div>
+    <div class="tag">09 ・ 動かす（かんたん版）</div>
+    <h2><span class="en">Lightsail</span><span class="ja">AWSの初心者セット</span></h2>
+    <p>サーバー・ネットワーク・固定IPがパックになった、月額固定のお手軽レンタルサーバー（VPS）。WordPressなら数クリックで立ち上がります。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>全部入りのパックか、部品を選んで組み立てるか</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 330" role="img" aria-label="Lightsailはサーバー、固定IP、DNS、スナップショット、テンプレート、ストレージが1つの月額パックにまとまっている。EC2はVPC、セキュリティグループ、EBS、AMI、タイプ、Elastic IP、Route 53などを自分で選んで組み立てる">
+        <rect x="24" y="30" width="410" height="270" rx="18" style="fill:color-mix(in srgb,var(--c-compute) 8%,var(--surface));stroke:var(--c-compute);stroke-width:2.4"/>
+        <text x="46" y="64" style="fill:var(--c-compute);font-size:17px;font-weight:700">Lightsail ＝ 全部入りパック</text>
+        <rect x="298" y="14" width="124" height="32" rx="16" style="fill:var(--c-compute)"/>
+        <text class="pilltxt" x="360" y="35">月額 $3.5〜</text>
+        <g style="font-size:15px">
+          <rect x="48" y="88" width="178" height="52" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/><text class="ink" x="137" y="120" text-anchor="middle">仮想サーバー</text>
+          <rect x="234" y="88" width="178" height="52" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/><text class="ink" x="323" y="120" text-anchor="middle">固定IP</text>
+          <rect x="48" y="150" width="178" height="52" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/><text class="ink" x="137" y="182" text-anchor="middle">DNS設定</text>
+          <rect x="234" y="150" width="178" height="52" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/><text class="ink" x="323" y="182" text-anchor="middle">スナップショット</text>
+          <rect x="48" y="212" width="178" height="52" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/><text class="ink" x="137" y="236" text-anchor="middle">アプリテンプレ</text><text class="tiny" x="137" y="254" text-anchor="middle">WordPress・LAMPなど</text>
+          <rect x="234" y="212" width="178" height="52" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/><text class="ink" x="323" y="236" text-anchor="middle">ストレージ・DB</text><text class="tiny" x="323" y="254" text-anchor="middle">オプションで追加</text>
+        </g>
+        <text class="small" x="229" y="288" text-anchor="middle">数クリックで起動・料金は月額固定</text>
+
+        <text class="ink" x="494" y="64" style="font-size:17px;font-weight:700">EC2 ＝ 部品を選んで組み立て</text>
+        <g style="stroke:var(--muted);stroke-width:1.6;stroke-dasharray:4 4;fill:none">
+          <line x1="562" y1="124" x2="702" y2="194"/><line x1="702" y1="124" x2="702" y2="170"/><line x1="842" y1="124" x2="702" y2="194"/>
+          <line x1="624" y1="194" x2="640" y2="194"/><line x1="764" y1="194" x2="780" y2="194"/>
+          <line x1="562" y1="264" x2="702" y2="194"/><line x1="702" y1="218" x2="702" y2="240"/><line x1="842" y1="264" x2="702" y2="194"/>
+        </g>
+        <g style="font-size:14px">
+          <rect x="500" y="100" width="124" height="48" rx="10" style="fill:var(--surface);stroke:var(--c-net);stroke-width:1.8"/><text class="ink" x="562" y="129" text-anchor="middle">VPC</text>
+          <rect x="640" y="100" width="124" height="48" rx="10" style="fill:var(--surface);stroke:var(--c-sec);stroke-width:1.8"/><text class="ink" x="702" y="129" text-anchor="middle">SG</text>
+          <rect x="780" y="100" width="124" height="48" rx="10" style="fill:var(--surface);stroke:var(--c-storage);stroke-width:1.8"/><text class="ink" x="842" y="129" text-anchor="middle">EBS</text>
+          <rect x="500" y="170" width="124" height="48" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.8"/><text class="ink" x="562" y="199" text-anchor="middle">AMI（OS）</text>
+          <rect x="640" y="170" width="124" height="48" rx="10" style="fill:var(--c-compute)"/><text x="702" y="200" text-anchor="middle" style="fill:var(--surface);font-weight:700;font-size:16px">EC2</text>
+          <rect x="780" y="170" width="124" height="48" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.8"/><text class="ink" x="842" y="199" text-anchor="middle">タイプ選択</text>
+          <rect x="500" y="240" width="124" height="48" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.8"/><text class="ink" x="562" y="269" text-anchor="middle">Elastic IP</text>
+          <rect x="640" y="240" width="124" height="48" rx="10" style="fill:var(--surface);stroke:var(--c-net);stroke-width:1.8"/><text class="ink" x="702" y="269" text-anchor="middle">Route 53</text>
+          <rect x="780" y="240" width="124" height="48" rx="10" style="fill:var(--surface);stroke:var(--c-net);stroke-width:1.8;stroke-dasharray:4 3"/><text class="ink" x="842" y="269" text-anchor="middle">ELB（必要なら）</text>
+        </g>
+        <text class="small" x="702" y="316" text-anchor="middle">自由自在・従量課金。そのぶん知識が必要</text>
+      </svg>
+      </div>
+      <figcaption>たとえるなら、Lightsailは「設備がそろった部屋」、EC2は「設備を自分で選ぶ部屋」。</figcaption>
+    </figure>
+    <div class="grid2">
+      <div class="panel">
+        <h3>ざっくり比較</h3>
+        <table class="cmp">
+          <thead><tr><th></th><th class="c1">Lightsail</th><th>EC2</th></tr></thead>
+          <tbody>
+            <tr><th>難しさ</th><td><span class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></span><small>数クリック</small></td><td><span class="dots g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span><small>インフラ知識が必要</small></td></tr>
+            <tr><th>自由度</th><td><span class="dots"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span><small>決まった構成から</small></td><td><span class="dots g"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><small>ほぼ自由自在</small></td></tr>
+            <tr><th>料金</th><td><b>月額固定</b><small>予算管理しやすい</small></td><td><b>従量課金</b><small>使った分だけ</small></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h3>向いている人</h3>
+        <ul class="fit">
+          <li><span class="m">◎</span><span>とりあえずWordPressを動かしたい</span></li>
+          <li><span class="m">◎</span><span>個人の開発・検証環境がほしい</span></li>
+          <li><span class="m">◎</span><span>インフラ初心者だけど触ってみたい</span></li>
+          <li><span class="m tri">△</span><span>本番の大規模サービス <small>→ EC2 や Fargate</small></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VPC ================= -->
+<section id="vpc" class="svc cat-net">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-vpc"/></svg></div>
+    <div class="tag">10 ・ つなぐ（土台）</div>
+    <h2><span class="en">VPC</span><span class="ja">自分専用の土地</span></h2>
+    <p>Virtual Private Cloud。AWSの中に作る自分だけのネットワーク空間です。EC2やRDSはこの中に置きます。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>家にたとえると：土地・部屋・玄関・鍵</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 900 400" role="img" aria-label="VPCを土地にたとえ、パブリックサブネットにWebサーバーのEC2、プライベートサブネットにRDSを置く。インターネットからは玄関のIGWを通ってEC2にだけ入れ、RDSにはEC2からしかアクセスできない">
+        <rect x="330" y="8" width="240" height="48" rx="24" style="fill:var(--soft)"/>
+        <text class="ink" x="450" y="38" text-anchor="middle" style="font-size:16px;font-weight:700">インターネット</text>
+        <rect x="20" y="98" width="860" height="290" rx="16" style="fill:color-mix(in srgb,var(--c-net) 6%,transparent);stroke:var(--c-net);stroke-width:2.4"/>
+        <text x="40" y="128" style="fill:var(--c-net);font-size:16px;font-weight:700">VPC ＝ 土地</text>
+        <rect x="160" y="84" width="170" height="32" rx="8" style="fill:var(--c-net)"/>
+        <text class="pilltxt" x="245" y="105">IGW（玄関）</text>
+        <rect x="44" y="148" width="390" height="220" rx="12" style="fill:color-mix(in srgb,var(--c-storage) 8%,var(--surface));stroke:var(--c-storage);stroke-width:2"/>
+        <text x="64" y="176" style="fill:var(--c-storage);font-size:15px;font-weight:700">パブリックサブネット</text>
+        <text class="small" x="64" y="196">外から入れる部屋</text>
+        <rect x="466" y="148" width="390" height="220" rx="12" style="fill:color-mix(in srgb,var(--c-db) 8%,var(--surface));stroke:var(--c-db);stroke-width:2"/>
+        <text x="486" y="176" style="fill:var(--c-db);font-size:15px;font-weight:700">プライベートサブネット</text>
+        <text class="small" x="486" y="196">内側からしか入れない部屋</text>
+        <g class="node cat-compute"><rect x="150" y="244" width="190" height="80" rx="12"/><text class="nt" x="245" y="279">EC2</text><text class="ns" x="245" y="302">Webサーバー（家具）</text></g>
+        <g class="node cat-db"><rect x="572" y="244" width="190" height="80" rx="12"/><text class="nt" x="667" y="279">RDS</text><text class="ns" x="667" y="302">データベース（冷蔵庫）</text></g>
+        <rect x="300" y="230" width="62" height="26" rx="13" style="fill:var(--c-sec)"/><text class="pilltxt" x="331" y="248" style="font-size:12px">SG 鍵</text>
+        <rect x="722" y="230" width="62" height="26" rx="13" style="fill:var(--c-sec)"/><text class="pilltxt" x="753" y="248" style="font-size:12px">SG 鍵</text>
+        <path class="wire ok" d="M380 56C330 66 252 64 247 80" marker-end="url(#ahok)"/>
+        <path class="wire ok" d="M245 116V240" marker-end="url(#ahok)"/>
+        <path class="wire ok" d="M340 284H568" marker-end="url(#ahok)"/>
+        <rect x="392" y="256" width="124" height="26" rx="13" style="fill:var(--surface);stroke:var(--ok);stroke-width:1.6"/><text class="okt" x="454" y="274" text-anchor="middle" style="font-size:13px">EC2からだけ許可</text>
+        <path class="wire ng dash" d="M540 56C720 70 800 150 740 240"/>
+        <circle cx="674" cy="85" r="14" style="fill:var(--surface);stroke:var(--ng);stroke-width:2"/>
+        <text class="ngt" x="674" y="90" text-anchor="middle" style="font-size:15px">✕</text>
+        <text x="696" y="72" style="fill:var(--ng);font-size:13px;font-weight:700">外から直接は入れない</text>
+      </svg>
+      </div>
+      <figcaption>VPC（土地）の中を部屋（サブネット）に区切り、玄関（インターネットゲートウェイ）を付け、鍵（セキュリティグループ）で出入りを制御します。</figcaption>
+    </figure>
+    <div class="grid2 even">
+      <div class="panel">
+        <h3>どんな時に意識する？</h3>
+        <div class="uses" style="grid-template-columns:minmax(0,1fr)">
+          <div class="use"><i>EC2</i>起動時に、どのVPCに置くかを選ぶ</div>
+          <div class="use"><i>RDS</i>非公開にしたいならプライベートサブネットへ</div>
+          <div class="use"><i>Lambda</i>DBに接続するなら同じVPCにいる必要あり</div>
+        </div>
+      </div>
+      <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>よくあるハマりどころ</b>
+        <ul><li>全部非公開にして外と通信できない</li><li>セキュリティ設定が厳しすぎて何もつながらない</li><li>最初はAWSが用意している「デフォルトVPC」で感覚をつかむのもアリ</li></ul></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ELB ================= -->
+<section id="elb" class="svc cat-net">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-elb"/></svg></div>
+    <div class="tag">11 ・ 振り分ける</div>
+    <h2><span class="en">ELB</span><span class="ja">アクセスの交通整理員</span></h2>
+    <p>Elastic Load Balancing。押し寄せたアクセスを複数のEC2に振り分け、1台にアクセスが集中してパンクするのを防ぎます。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>焼肉屋の入口スタッフのように、空いている席（EC2）へ案内</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 900 330" role="img" aria-label="お客さんのアクセスがELBに届き、正常なEC2①と②に振り分けられる。故障したEC2③はヘルスチェックで自動的に外される">
+        <g style="color:var(--muted)"><use href="#i-user" x="40" y="84" width="36" height="40"/><use href="#i-user" x="40" y="144" width="36" height="40"/><use href="#i-user" x="40" y="204" width="36" height="40"/></g>
+        <text class="small" x="58" y="272" text-anchor="middle">お客さん</text>
+        <path class="wire" d="M92 164H226" marker-end="url(#ah)"/>
+        <text class="small mono" x="159" y="154" text-anchor="middle">example.com</text>
+        <g class="node cat-net solid"><rect x="230" y="120" width="170" height="88" rx="14"/><text class="nt" x="315" y="160" style="font-size:20px">ELB</text><text class="ns" x="315" y="184">入口で案内</text></g>
+        <path class="wire ok" d="M400 146C490 146 500 64 596 64" marker-end="url(#ahok)"/>
+        <path class="wire ok" d="M400 164H596" marker-end="url(#ahok)"/>
+        <path class="wire ng dash" d="M400 182C490 182 500 264 596 264"/>
+        <g class="node cat-compute"><rect x="600" y="30" width="210" height="68" rx="12"/><text class="nt" x="705" y="60">EC2 ①</text><text class="ns" x="705" y="82" style="fill:var(--ok);font-weight:700">正常</text></g>
+        <g class="node cat-compute"><rect x="600" y="130" width="210" height="68" rx="12"/><text class="nt" x="705" y="160">EC2 ②</text><text class="ns" x="705" y="182" style="fill:var(--ok);font-weight:700">正常</text></g>
+        <g class="node cat-compute" opacity=".45"><rect x="600" y="230" width="210" height="68" rx="12" style="stroke-dasharray:6 4"/><text class="nt" x="705" y="260">EC2 ③</text><text class="ns" x="705" y="282" style="fill:var(--ng);font-weight:700">ダウン</text></g>
+        <circle cx="520" cy="236" r="15" style="fill:var(--surface);stroke:var(--ng);stroke-width:2"/>
+        <text class="ngt" x="520" y="242" text-anchor="middle" style="font-size:16px">✕</text>
+        <text class="small" x="705" y="322" text-anchor="middle">ヘルスチェックで故障を検知 → 自動で外し、復活したら戻す</text>
+      </svg>
+      </div>
+    </figure>
+    <figure class="fig">
+      <div class="fig-head"><h3>ALBならURLのパスで行き先を変えられる</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 900 250" role="img" aria-label="ALBが/api/で始まるリクエストをAPIサーバー群へ、/images/で始まるリクエストを画像サーバー群へ振り分ける">
+        <use href="#i-user" x="34" y="102" width="36" height="40" style="color:var(--muted)"/>
+        <path class="wire" d="M84 124H186" marker-end="url(#ah)"/>
+        <g class="node cat-net solid"><rect x="190" y="82" width="170" height="84" rx="14"/><text class="nt" x="275" y="120" style="font-size:20px">ALB</text><text class="ns" x="275" y="144">パスで判断</text></g>
+        <path class="wire" d="M360 106C460 106 470 64 566 64" marker-end="url(#ah)"/>
+        <path class="wire" d="M360 142C460 142 470 186 566 186" marker-end="url(#ah)"/>
+        <rect x="420" y="62" width="96" height="28" rx="14" style="fill:var(--c-net)"/><text class="pilltxt mono" x="468" y="81">/api/*</text>
+        <rect x="412" y="158" width="112" height="28" rx="14" style="fill:var(--c-net)"/><text class="pilltxt mono" x="468" y="177">/images/*</text>
+        <rect x="570" y="20" width="310" height="90" rx="14" style="fill:color-mix(in srgb,var(--c-compute) 8%,var(--surface));stroke:var(--c-compute);stroke-width:2"/>
+        <text class="ink" x="592" y="58" style="font-size:16px;font-weight:700">APIサーバー群</text>
+        <text class="small" x="592" y="82">注文・ログインなど</text>
+        <rect x="760" y="40" width="50" height="50" rx="8" style="fill:var(--c-compute)"/><text class="pilltxt" x="785" y="70" style="font-size:12px">EC2</text>
+        <rect x="818" y="40" width="50" height="50" rx="8" style="fill:var(--c-compute)"/><text class="pilltxt" x="843" y="70" style="font-size:12px">EC2</text>
+        <rect x="570" y="140" width="310" height="90" rx="14" style="fill:color-mix(in srgb,var(--c-compute) 8%,var(--surface));stroke:var(--c-compute);stroke-width:2"/>
+        <text class="ink" x="592" y="178" style="font-size:16px;font-weight:700">画像サーバー群</text>
+        <text class="small" x="592" y="202">商品画像など</text>
+        <rect x="760" y="160" width="50" height="50" rx="8" style="fill:var(--c-compute)"/><text class="pilltxt" x="785" y="190" style="font-size:12px">EC2</text>
+        <rect x="818" y="160" width="50" height="50" rx="8" style="fill:var(--c-compute)"/><text class="pilltxt" x="843" y="190" style="font-size:12px">EC2</text>
+      </svg>
+      </div>
+    </figure>
+    <div class="grid2 even">
+      <div class="panel">
+        <h3>3つの種類</h3>
+        <div class="fit">
+          <div class="tile"><span class="k">ALB ・ まずはこれ</span><b>Application Load Balancer</b><span>Webアプリ向け。Webサービスなら8割これでOK</span></div>
+          <div class="tile"><span class="k">NLB</span><b>Network Load Balancer</b><span>超高速。ミリ秒が命のTCP通信向け</span></div>
+          <div class="tile" style="opacity:.7"><span class="k">CLB ・ 非推奨</span><b>Classic Load Balancer</b><span>昔からあるタイプ。古い構成で見かける</span></div>
+        </div>
+      </div>
+      <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>気をつけるポイント</b>
+        <ul><li>HTTPS化はELBで（証明書はACMから）</li><li>セキュリティグループの設定漏れで全ブロック</li><li>DNS名が <code>*.elb.amazonaws.com</code> になるので独自ドメインはRoute 53と連携</li></ul></div></div>
+    </div>
+    <div class="oneliner"><b>鉄板パターン</b>サーバーを増やす ＝ ELBを入れる。Auto ScalingでEC2を2台→3台に増やしても、URLはそのまま。</div>
+  </div>
+</section>
+
+<!-- ================= Region / AZ ================= -->
+<section id="region" class="svc cat-geo">
+  <header class="svc-head">
+    <div class="badge"><svg class="ico"><use href="#i-region"/></svg></div>
+    <div class="tag">12 ・ 土台</div>
+    <h2><span class="en">リージョン / AZ</span><span class="ja">営業所エリアと独立した建物</span></h2>
+    <p>リージョンは世界各地にある「データセンターのあるエリア」。AZ（アベイラビリティーゾーン）は、その中にある独立した建物群です。</p>
+  </header>
+  <div class="sbody">
+    <figure class="fig">
+      <div class="fig-head"><h3>主なリージョン（AWSを使うとき最初に選ぶ場所）</h3><span>一部を抜粋</span></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 440" role="img" aria-label="世界地図上の主なAWSリージョン。東京、大阪、シンガポール、ムンバイ、シドニー、フランクフルト、バージニア北部、オレゴン、サンパウロ">
+        <path class="land" d="M64 32 L133 35 L213 42 L253 26 L280 60 L331 91 L315 112 L293 125 L277 143 L267 174 L240 158 L221 171 L227 195 L245 202 L269 223 L259 226 L232 205 L200 189 L168 155 L149 128 L147 103 L115 72 L88 66 L45 82 L40 66 L32 48Z M288 214 L315 220 L341 235 L387 266 L379 291 L368 322 L339 355 L315 374 L299 411 L293 420 L280 392 L288 352 L291 306 L264 266 L267 245 L275 226Z M456 140 L456 118 L467 103 L485 94 L501 85 L501 75 L496 72 L493 57 L533 35 L555 32 L587 38 L627 26 L693 26 L760 20 L827 26 L907 35 L960 48 L955 60 L915 66 L896 75 L856 91 L861 69 L843 85 L832 118 L821 131 L819 143 L805 131 L805 155 L784 183 L768 186 L765 220 L760 223 L747 211 L757 248 L741 226 L741 202 L720 183 L709 189 L685 226 L675 192 L659 174 L632 174 L608 158 L616 177 L637 183 L600 211 L565 158 L576 137 L557 125 L544 137 L533 128 L515 112 L520 128 L523 134 L501 115 L488 118 L480 128 L464 140Z M464 143 L507 137 L509 149 L533 152 L565 155 L579 183 L597 214 L616 217 L589 257 L587 282 L573 328 L549 355 L528 355 L517 322 L515 288 L512 266 L504 238 L469 235 L456 235 L440 220 L435 205 L435 186 L445 165Z M829 288 L859 285 L869 306 L888 337 L875 368 L853 368 L835 349 L792 358 L784 318 L819 294Z M827 155 L827 146 L835 143 L845 137 L853 128 L856 125 L859 112 L867 118 L861 122 L859 131 L853 143 L845 146 L840 149Z M467 97 L469 91 L467 82 L467 72 L472 72 L477 82 L480 88 L483 94Z M363 66 L384 48 L421 35 L427 20 L320 20 L336 35 L341 51Z M733 235 L763 269 L787 275 L813 275 L840 263 L856 275 L856 257 L829 251 L795 245 L792 232 L771 248 L760 260Z"/>
+        <g style="fill:var(--c-geo);stroke:var(--surface);stroke-width:3">
+          <circle cx="159" cy="111" r="9"/><circle cx="273" cy="131" r="9"/><circle cx="356" cy="323" r="9"/><circle cx="503" cy="97" r="9"/><circle cx="674" cy="192" r="9"/><circle cx="757" cy="247" r="9"/><circle cx="883" cy="355" r="9"/><circle cx="841" cy="150" r="8"/>
+        </g>
+        <circle cx="853" cy="138" r="12" style="fill:var(--c-compute);stroke:var(--surface);stroke-width:3"/>
+        <g style="font-size:13.5px;font-weight:700;fill:var(--ink)">
+          <text x="140" y="92" text-anchor="middle">オレゴン</text><text class="tiny mono" x="140" y="76" text-anchor="middle">us-west-2</text>
+          <text x="290" y="160">バージニア北部</text><text class="tiny mono" x="290" y="176">us-east-1</text>
+          <text x="372" y="320">サンパウロ</text><text class="tiny mono" x="372" y="336">sa-east-1</text>
+          <text x="503" y="78" text-anchor="middle">フランクフルト</text><text class="tiny mono" x="503" y="62" text-anchor="middle">eu-central-1</text>
+          <text x="660" y="214" text-anchor="end">ムンバイ</text><text class="tiny mono" x="660" y="230" text-anchor="end">ap-south-1</text>
+          <text x="742" y="270" text-anchor="end">シンガポール</text><text class="tiny mono" x="742" y="286" text-anchor="end">ap-southeast-1</text>
+          <text x="868" y="388" text-anchor="end">シドニー</text><text class="tiny mono" x="868" y="404" text-anchor="end">ap-southeast-2</text>
+          <text x="826" y="178" text-anchor="end">大阪</text><text class="tiny mono" x="826" y="194" text-anchor="end">ap-northeast-3</text>
+        </g>
+        <rect x="806" y="86" width="140" height="30" rx="15" style="fill:var(--c-compute)"/>
+        <text class="pilltxt" x="876" y="106">東京 ap-northeast-1</text>
+        <g transform="translate(24 380)">
+          <rect x="0" y="0" width="290" height="46" rx="10" style="fill:var(--surface);stroke:var(--line)"/>
+          <circle cx="20" cy="23" r="7" style="fill:var(--c-ops)"/>
+          <text class="small" x="34" y="20">新サービスはバージニア北部から</text>
+          <text class="small" x="34" y="37">先に使えることが多い</text>
+        </g>
+        <circle cx="273" cy="131" r="15" style="fill:none;stroke:var(--c-ops);stroke-width:2.4"/>
+      </svg>
+      </div>
+      <figcaption>東京と大阪は別々のリージョンです（大阪は東京のAZの1つではありません）。日本国内に保管が必要なデータなら東京・大阪、北米向けサービスなら米国のリージョン、というように選びます。</figcaption>
+    </figure>
+    <div class="grid2 even">
+      <figure class="fig">
+        <div class="fig-head"><h3>入れ子の関係</h3></div>
+        <svg viewBox="0 0 520 300" role="img" aria-label="AWS全体の中に複数のリージョンがあり、リージョンの中に複数のAZがあり、AZの中に1つ以上のデータセンターがある" style="display:block;width:100%;height:auto">
+          <rect x="6" y="6" width="508" height="288" rx="16" style="fill:none;stroke:var(--muted);stroke-width:1.6;stroke-dasharray:7 5;stroke-opacity:.6"/>
+          <text class="lbl" x="24" y="32">AWS全体（世界中に多数のリージョン）</text>
+          <rect x="24" y="48" width="472" height="228" rx="14" style="fill:color-mix(in srgb,var(--c-geo) 8%,var(--surface));stroke:var(--c-geo);stroke-width:2"/>
+          <text x="42" y="74" style="fill:var(--c-geo);font-size:15px;font-weight:700">リージョン（例：東京）</text>
+          <g>
+            <rect x="42" y="90" width="138" height="146" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/>
+            <text class="ink" x="111" y="116" text-anchor="middle" style="font-size:15px;font-weight:700">AZ-a</text>
+            <use href="#i-bld" x="66" y="140" width="38" height="46" style="color:var(--c-geo)"/><use href="#i-bld" x="116" y="140" width="38" height="46" style="color:var(--c-geo)"/>
+            <text class="tiny" x="111" y="214" text-anchor="middle">データセンター</text>
+            <rect x="191" y="90" width="138" height="146" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/>
+            <text class="ink" x="260" y="116" text-anchor="middle" style="font-size:15px;font-weight:700">AZ-c</text>
+            <use href="#i-bld" x="215" y="140" width="38" height="46" style="color:var(--c-geo)"/><use href="#i-bld" x="265" y="140" width="38" height="46" style="color:var(--c-geo)"/>
+            <text class="tiny" x="260" y="214" text-anchor="middle">データセンター</text>
+            <rect x="340" y="90" width="138" height="146" rx="10" style="fill:var(--surface);stroke:var(--line);stroke-width:1.6"/>
+            <text class="ink" x="409" y="116" text-anchor="middle" style="font-size:15px;font-weight:700">AZ-d</text>
+            <use href="#i-bld" x="364" y="140" width="38" height="46" style="color:var(--c-geo)"/><use href="#i-bld" x="414" y="140" width="38" height="46" style="color:var(--c-geo)"/>
+            <text class="tiny" x="409" y="214" text-anchor="middle">データセンター</text>
+          </g>
+          <text class="tiny" x="260" y="262" text-anchor="middle">AZ同士は離れた場所にあり、電源やネットワークも独立</text>
+        </svg>
+      </figure>
+      <figure class="fig">
+        <div class="fig-head"><h3>1つのAZが止まっても動き続ける</h3></div>
+        <svg viewBox="0 0 520 300" role="img" aria-label="AZ-aが停電で止まっても、AZ-cのEC2とRDSが処理を引き継いで動き続ける" style="display:block;width:100%;height:auto">
+          <rect x="16" y="14" width="236" height="272" rx="12" style="fill:color-mix(in srgb,var(--ng) 8%,transparent);stroke:var(--ng);stroke-width:1.8;stroke-dasharray:6 4"/>
+          <text class="ink" x="34" y="42" style="font-size:15px;font-weight:700">AZ-a</text>
+          <text class="ngt" x="234" y="42" text-anchor="end" style="font-size:14px">停電！</text>
+          <g opacity=".4">
+            <g class="node cat-compute"><rect x="40" y="62" width="188" height="66" rx="10"/><text class="nt" x="134" y="91">EC2</text><text class="ns" x="134" y="113">Webサーバー①</text></g>
+            <g class="node cat-db"><rect x="40" y="150" width="188" height="66" rx="10"/><text class="nt" x="134" y="179">RDS</text><text class="ns" x="134" y="201">メイン</text></g>
+          </g>
+          <text class="ngt" x="134" y="256" text-anchor="middle" style="font-size:15px">停止</text>
+          <rect x="268" y="14" width="236" height="272" rx="12" style="fill:color-mix(in srgb,var(--ok) 8%,transparent);stroke:var(--ok);stroke-width:1.8"/>
+          <text class="ink" x="286" y="42" style="font-size:15px;font-weight:700">AZ-c</text>
+          <g class="node cat-compute"><rect x="292" y="62" width="188" height="66" rx="10"/><text class="nt" x="386" y="91">EC2</text><text class="ns" x="386" y="113">Webサーバー②</text></g>
+          <g class="node cat-db"><rect x="292" y="150" width="188" height="66" rx="10"/><text class="nt" x="386" y="179">RDS</text><text class="ns" x="386" y="201">予備 → メインに昇格</text></g>
+          <text class="okt" x="386" y="256" text-anchor="middle" style="font-size:15px">✓ 動き続ける</text>
+          <path class="wire dash" d="M228 183H288" marker-end="url(#ah)"/>
+        </svg>
+        <figcaption>AZを分けるだけでなく、切り替えまで含めた構成（マルチAZ）にしておくのがポイント。S3のように、AWSが自動でAZに分散してくれるサービスもあります。</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<!-- ================= Kiro ================= -->
+<section id="kiro" class="kiro-sec wrap cat-ai">
+  <div class="kiro-hero">
+    <span class="new">BONUS ・ AI開発ツール</span>
+    <h2><span class="en">Kiro</span><span class="ja">仕様書から作るAI開発パートナー</span></h2>
+    <p>AWSが提供するAIエージェント型の開発環境（IDE・CLI・Web）。いきなりコードを書くのではなく、まず「要件 → 設計 → タスク」を文書にしてから実装する<b>スペック駆動開発</b>が特徴です。</p>
+    <div class="modes">
+      <div class="mode"><span class="k">VIBE MODE</span><b>チャットでさっと作る</b><p>思いついたことを話しかけて、すぐ試作。小さな修正や実験向け。</p></div>
+      <div class="mode"><span class="k">SPEC MODE</span><b>仕様書を作ってから作る</b><p>要件・設計・タスクを先に固める。本格的な機能や複数人での開発向け。</p></div>
+    </div>
+  </div>
+
+  <div class="sbody" style="margin-top:18px">
+    <figure class="fig">
+      <div class="fig-head"><h3>スペック駆動開発の流れ（例：静的サイトを作りたい）</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 980 300" role="img" aria-label="プロンプトからrequirements.md、design.md、tasks.mdの3つの文書をKiroが作り、人が確認しながら進めて、最後にコードとテストを作る">
+        <!-- 1 prompt bubble -->
+        <rect x="16" y="50" width="160" height="150" rx="16" style="fill:var(--surface);stroke:var(--c-ai);stroke-width:2"/>
+        <path d="M40 200L36 228L70 200Z" style="fill:var(--surface);stroke:var(--c-ai);stroke-width:2;stroke-linejoin:round"/>
+        <rect x="38" y="198" width="34" height="5" style="fill:var(--surface)"/>
+        <text class="mono" x="34" y="78" style="fill:var(--c-ai);font-size:12px;font-weight:600">prompt</text>
+        <g class="ink" style="font-size:14px"><text x="34" y="108">S3と</text><text x="34" y="130">CloudFrontで</text><text x="34" y="152">サイトを公開</text><text x="34" y="174">したい</text></g>
+        <!-- doc template: folded corner -->
+        <g>
+          <path d="M216 40H346L376 70V220H216Z" style="fill:var(--surface);stroke:var(--c-ai);stroke-width:2"/><path d="M346 40V70H376" style="fill:none;stroke:var(--c-ai);stroke-width:2"/>
+          <text class="mono" x="230" y="64" style="fill:var(--c-ai);font-size:11.5px;font-weight:600">requirements</text>
+          <text class="ink" x="230" y="94" style="font-size:15px;font-weight:700">要件</text>
+          <g class="mono" style="font-size:10.5px;fill:var(--muted)"><text x="230" y="120">WHEN 訪問者が</text><text x="230" y="136">  アクセスしたら</text><text x="230" y="152">THE SYSTEM</text><text x="230" y="168">  SHALL HTTPSで</text><text x="230" y="184">  表示する</text></g>
+        </g>
+        <g>
+          <path d="M416 40H546L576 70V220H416Z" style="fill:var(--surface);stroke:var(--c-ai);stroke-width:2"/><path d="M546 40V70H576" style="fill:none;stroke:var(--c-ai);stroke-width:2"/>
+          <text class="mono" x="430" y="64" style="fill:var(--c-ai);font-size:11.5px;font-weight:600">design</text>
+          <text class="ink" x="430" y="94" style="font-size:15px;font-weight:700">設計</text>
+          <rect x="430" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-net);stroke-width:1.6"/><text x="450" y="129" text-anchor="middle" style="fill:var(--c-net);font-size:10px;font-weight:700">R53</text>
+          <rect x="476" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-net);stroke-width:1.6"/><text x="496" y="129" text-anchor="middle" style="fill:var(--c-net);font-size:10px;font-weight:700">CF</text>
+          <rect x="522" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-storage);stroke-width:1.6"/><text x="542" y="129" text-anchor="middle" style="fill:var(--c-storage);font-size:10px;font-weight:700">S3</text>
+          <path d="M470 125H476M516 125H522" style="stroke:var(--muted);stroke-width:1.6"/>
+          <g style="fill:var(--line)"><rect x="430" y="154" width="130" height="7" rx="3"/><rect x="430" y="170" width="110" height="7" rx="3"/><rect x="430" y="186" width="120" height="7" rx="3"/></g>
+        </g>
+        <g>
+          <path d="M616 40H746L776 70V220H616Z" style="fill:var(--surface);stroke:var(--c-ai);stroke-width:2"/><path d="M746 40V70H776" style="fill:none;stroke:var(--c-ai);stroke-width:2"/>
+          <text class="mono" x="630" y="64" style="fill:var(--c-ai);font-size:11.5px;font-weight:600">tasks</text>
+          <text class="ink" x="630" y="94" style="font-size:15px;font-weight:700">タスク</text>
+          <g style="font-size:12px">
+            <rect x="630" y="108" width="12" height="12" rx="2" style="fill:var(--c-ai)"/><text class="ink" x="650" y="119">S3バケット作成</text>
+            <rect x="630" y="132" width="12" height="12" rx="2" style="fill:var(--c-ai)"/><text class="ink" x="650" y="143">CloudFront設定</text>
+            <rect x="630" y="156" width="12" height="12" rx="2" style="fill:none;stroke:var(--muted);stroke-width:1.4"/><text class="ink" x="650" y="167">ドメイン設定</text>
+            <rect x="630" y="180" width="12" height="12" rx="2" style="fill:none;stroke:var(--muted);stroke-width:1.4"/><text class="ink" x="650" y="191">動作テスト</text>
+          </g>
+        </g>
+        <!-- code -->
+        <rect x="816" y="40" width="150" height="180" rx="14" style="fill:var(--c-ai)"/>
+        <text x="891" y="64" text-anchor="middle" class="mono" style="fill:var(--surface);font-size:11.5px;font-weight:600">code + test</text>
+        <text x="891" y="120" text-anchor="middle" class="mono" style="fill:var(--surface);font-size:34px;font-weight:600">&lt;/&gt;</text>
+        <text x="891" y="156" text-anchor="middle" style="fill:var(--surface);font-size:15px;font-weight:700">実装</text>
+        <rect x="836" y="174" width="110" height="28" rx="14" style="fill:var(--surface)"/>
+        <text x="891" y="193" text-anchor="middle" style="fill:var(--c-ai);font-size:13px;font-weight:700">テスト ✓ 合格</text>
+        <!-- arrows -->
+        <g style="fill:none;stroke:var(--c-ai);stroke-width:2.4"><path d="M180 130H210" marker-end="url(#ahc)"/><path d="M378 130H410" marker-end="url(#ahc)"/><path d="M578 130H610" marker-end="url(#ahc)"/><path d="M778 130H810" marker-end="url(#ahc)"/></g>
+        <!-- numbers -->
+        <g><circle cx="16" cy="50" r="14" style="fill:var(--c-ai)"/><text class="pilltxt mono" x="16" y="55">1</text></g>
+        <g><circle cx="216" cy="40" r="14" style="fill:var(--c-ai)"/><text class="pilltxt mono" x="216" y="45">2</text></g>
+        <g><circle cx="416" cy="40" r="14" style="fill:var(--c-ai)"/><text class="pilltxt mono" x="416" y="45">3</text></g>
+        <g><circle cx="616" cy="40" r="14" style="fill:var(--c-ai)"/><text class="pilltxt mono" x="616" y="45">4</text></g>
+        <g><circle cx="816" cy="40" r="14" style="fill:var(--surface);stroke:var(--c-ai);stroke-width:2"/><text class="mono" x="816" y="45" text-anchor="middle" style="fill:var(--c-ai);font-size:13px;font-weight:600">5</text></g>
+        <!-- review band -->
+        <rect x="216" y="248" width="560" height="36" rx="18" style="fill:color-mix(in srgb,var(--c-ai) 14%,var(--surface))"/>
+        <text x="496" y="271" text-anchor="middle" style="fill:var(--c-ai);font-size:14px;font-weight:700">Kiroが書く → 人が確認・修正 → 次へ進む（各ステップで繰り返し）</text>
+        <text class="small" x="96" y="262" text-anchor="middle">あなた</text>
+        <text class="small" x="891" y="262" text-anchor="middle">エージェント</text>
+      </svg>
+      </div>
+      <figcaption>要件は「WHEN（〜したら）… THE SYSTEM SHALL（〜する）」の形で書かれ、何ができたら完成かがはっきりします。AIの出力をいきなりコードで受け取るより、途中で軌道修正しやすいのが利点です。</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <div class="fig-head"><h3>Hooks：きっかけを決めて、裏で自動作業</h3></div>
+      <div class="scroll-hint">← 横にスクロールできます →</div>
+      <div class="scroll-x">
+      <svg viewBox="0 0 960 190" role="img" aria-label="ファイルを保存すると、Hookがきっかけを検知してエージェントが起動し、テストの追加やドキュメントの更新を自動で行う">
+        <g class="node cat-geo"><rect x="20" y="56" width="190" height="76" rx="12"/><text class="nt" x="115" y="90">ファイルを保存</text><text class="ns" x="115" y="113">きっかけ（イベント）</text></g>
+        <path d="M210 94H276" style="fill:none;stroke:var(--c-ai);stroke-width:2.4" marker-end="url(#ahc)"/>
+        <g class="node cat-ai"><rect x="280" y="56" width="190" height="76" rx="12"/><text class="nt" x="375" y="90">Hook</text><text class="ns" x="375" y="113">あらかじめ登録</text></g>
+        <path d="M470 94H536" style="fill:none;stroke:var(--c-ai);stroke-width:2.4" marker-end="url(#ahc)"/>
+        <g class="node cat-ai solid"><rect x="540" y="56" width="170" height="76" rx="12"/><text class="nt" x="625" y="90">エージェント</text><text class="ns" x="625" y="113">裏で作業</text></g>
+        <path d="M710 80C740 80 740 44 766 44" style="fill:none;stroke:var(--c-ai);stroke-width:2.4" marker-end="url(#ahc)"/>
+        <path d="M710 108C740 108 740 144 766 144" style="fill:none;stroke:var(--c-ai);stroke-width:2.4" marker-end="url(#ahc)"/>
+        <g class="node cat-ai"><rect x="770" y="16" width="170" height="56" rx="10"/><text class="nt" x="855" y="50" style="font-size:15px">テストを追加</text></g>
+        <g class="node cat-ai"><rect x="770" y="116" width="170" height="56" rx="10"/><text class="nt" x="855" y="150" style="font-size:15px">ドキュメント更新</text></g>
+      </svg>
+      </div>
+    </figure>
+
+    <div class="feat">
+      <div class="f"><span class="k">SPECS</span><b>仕様書づくり</b><p>プロンプトから要件・設計・タスクを自動で書き起こす。人がレビューしてから実装へ。</p></div>
+      <div class="f"><span class="k">STEERING</span><b>ルールを覚えさせる</b><p>使う技術、命名規則、チームの決まりごとをファイルに書いておくと、毎回それに従う。</p></div>
+      <div class="f"><span class="k">MCP / POWERS</span><b>外部ツールとつなぐ</b><p>MCPでドキュメントやAPI、Terraform・Figmaなどと連携し、より正確に作業できる。</p></div>
+      <div class="f"><span class="k">AGENTS</span><b>任せて並行作業</b><p>自律モードやサブエージェントで、大きな作業を分担して進める。</p></div>
+      <div class="f"><span class="k">CLI</span><b>ターミナルでも</b><p>CLIのヘッドレスモードでCI/CDパイプラインにも組み込める。</p></div>
+      <div class="f"><span class="k">MODELS</span><b>AIモデルを選べる</b><p>Claude・GPT・オープンウェイト系など。「Auto」ならタスクに合わせて自動選択。</p></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3>この資料の知識が、AIの設計を読む力になる</h3>
+<pre class="doc"><span class="h"># design.md（Kiroが出力した設計のイメージ）</span>
+
+## 構成
+- 静的ファイルは <span class="hl">S3</span> バケットに配置
+- <span class="hl">CloudFront</span> で配信、<span class="hl">OAC</span> でS3を非公開に
+- 独自ドメインは <span class="hl">Route 53</span>、証明書は <span class="hl">ACM</span>
+- デプロイ用に最小権限の <span class="hl">IAM ロール</span> を作成
+- エラー率を <span class="hl">CloudWatch</span> アラームで監視</pre>
+        <p class="note">黄色の単語がすべて分かれば、AIの提案が妥当かを自分で判断できます。</p>
+      </div>
+      <div class="stack">
+        <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>AIに任せるときのチェックポイント</b>
+          <ul><li>IAMポリシーが <code>*</code>（全権限）になっていないか</li><li>RDSやS3が意図せず公開されていないか</li><li>作ったEC2・RDSを起動しっぱなしにしていないか</li></ul></div></div>
+        <div class="panel">
+          <h3>料金プラン（1ユーザーあたり・月額）</h3>
+          <div class="tbl-wrap">
+          <table class="price">
+            <thead><tr><th>プラン</th><th>月額</th><th>クレジット</th><th class="barc">量</th></tr></thead>
+            <tbody>
+              <tr><td class="plan">Free</td><td>$0</td><td>50</td><td class="barc"><div class="cbar" style="width:1%"></div></td></tr>
+              <tr><td class="plan">Pro</td><td>$20</td><td>1,000</td><td class="barc"><div class="cbar" style="width:10%"></div></td></tr>
+              <tr><td class="plan">Pro+</td><td>$40</td><td>2,000</td><td class="barc"><div class="cbar" style="width:20%"></div></td></tr>
+              <tr><td class="plan">Pro Max</td><td>$100</td><td>5,000</td><td class="barc"><div class="cbar" style="width:50%"></div></td></tr>
+              <tr><td class="plan">Power</td><td>$200</td><td>10,000</td><td class="barc"><div class="cbar" style="width:100%"></div></td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p class="note">追加1クレジット$0.04、余りは翌月に繰り越されません。Google・GitHub・AWS Builder IDなどでサインイン。2026年10月時点の公式サイト（kiro.dev）の情報です。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Summary -->
+<section id="summary" class="summary wrap" style="scroll-margin-top:60px">
+  <div class="sect-title"><h2>早見表</h2><p>迷ったらここに戻る</p></div>
+  <div class="sum-wrap">
+  <table class="sum">
+    <thead><tr><th>サービス</th><th>役割</th><th>たとえ</th></tr></thead>
+    <tbody>
+      <tr class="cat-compute"><td><a href="#ec2">EC2</a></td><td>アプリやプログラムを動かす</td><td>借りられるパソコン／オフィス</td></tr>
+      <tr class="cat-storage"><td><a href="#s3">S3</a></td><td>ファイルを保存する</td><td>なんでも置ける倉庫</td></tr>
+      <tr class="cat-db"><td><a href="#rds">RDS</a></td><td>データを整理して保存・検索</td><td>おまかせDB屋さん／書類保管庫</td></tr>
+      <tr class="cat-sec"><td><a href="#iam">IAM</a></td><td>誰が何をできるかを管理</td><td>入退室管理・通行証</td></tr>
+      <tr class="cat-ops"><td><a href="#cloudwatch">CloudWatch</a></td><td>状態を監視し、異常を通知</td><td>監視カメラ＆健康診断</td></tr>
+      <tr class="cat-compute"><td><a href="#lambda">Lambda</a></td><td>イベントで自動処理を実行</td><td>呼ばれた時だけのアルバイト</td></tr>
+      <tr class="cat-net"><td><a href="#cloudfront">CloudFront</a></td><td>コンテンツを高速配信</td><td>配送センター</td></tr>
+      <tr class="cat-net"><td><a href="#route53">Route 53</a></td><td>ドメイン名をサーバーへ案内</td><td>住所案内所</td></tr>
+      <tr class="cat-compute"><td><a href="#lightsail">Lightsail</a></td><td>手軽に月額固定でサーバー</td><td>設備がそろった部屋</td></tr>
+      <tr class="cat-net"><td><a href="#vpc">VPC</a></td><td>自分専用のネットワーク</td><td>土地（部屋＝サブネット）</td></tr>
+      <tr class="cat-net"><td><a href="#elb">ELB</a></td><td>アクセスを複数サーバーに振り分け</td><td>交通整理員</td></tr>
+      <tr class="cat-geo"><td><a href="#region">リージョン/AZ</a></td><td>設備のある地域と建物</td><td>営業所エリアと建物</td></tr>
+      <tr class="cat-ai"><td><a href="#kiro">Kiro</a></td><td>仕様書からAIで開発</td><td>設計から手伝う開発パートナー</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">
+  元資料「AWSこれだけは知っておけ」をもとに図解化。地図は位置関係を示すための簡略図です。Kiroの情報は <a href="https://kiro.dev/" target="_blank" rel="noopener">kiro.dev</a> ／ <a href="https://kiro.dev/pricing/" target="_blank" rel="noopener">kiro.dev/pricing</a>（2026年10月時点）。
+</footer>
+
+</body></html>
