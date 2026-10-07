@@ -38,35 +38,35 @@ h1,h2,h3{text-wrap:balance;margin:0}
 .nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .nav ul{list-style:none;margin:0 auto;max-width:1160px;padding:10px 20px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
 .nav ul::-webkit-scrollbar{display:none}
-.nav a{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;font-size:13px;font-weight:500;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.nav a{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;font-size:14px;font-weight:500;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
 .nav a::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c)}
 .nav a:hover,.nav a:focus-visible{border-color:var(--c);outline:none}
 
 /* hero */
 .hero{padding-block:44px 16px}
-.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.eyebrow{font-family:var(--f-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(34px,6.4vw,68px);line-height:1.15;margin-top:10px;letter-spacing:.01em}
 .hero h1 em{font-style:normal;color:var(--c-compute)}
 .hero p.sub{font-size:clamp(15px,2vw,18px);color:var(--muted);margin:14px 0 0;max-width:40em}
 .steps{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-.steps li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13.5px;line-height:1.4}
-.steps .no{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-weight:600;font-size:13px}
+.steps li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:14.5px;line-height:1.4}
+.steps .no{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-weight:600;font-size:14px}
 .steps b{display:block;font-size:14px}
-.steps small{color:var(--muted);font-size:12px}
+.steps small{color:var(--muted);font-size:13px}
 @media (max-width:900px){.steps{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
 
 /* figures */
 .fig{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px 20px 16px;min-width:0}
 .fig-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 16px;margin-bottom:10px}
 .fig-head h3{font-size:17px;font-weight:700}
-.fig-head span{font-size:12.5px;color:var(--muted)}
-.fig figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;line-height:1.6}
+.fig-head span{font-size:13.5px;color:var(--muted)}
+.fig figcaption{font-size:14.5px;color:var(--muted);margin-top:10px;line-height:1.6}
 .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .scroll-x > svg{display:block;width:100%;height:auto;min-width:680px;margin-inline:auto}
 .scroll-x.narrow > svg{min-width:520px}
-.scroll-hint{display:none;font-size:12px;color:var(--muted);margin-bottom:4px}
+.scroll-hint{display:none;font-size:13px;color:var(--muted);margin-bottom:4px}
 @media (max-width:720px){.scroll-hint{display:block}}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:12.5px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;font-size:13.5px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend span::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--c)}
 
@@ -76,7 +76,7 @@ svg text{font-family:var(--f-body)}
 .node.solid rect{fill:var(--c)}
 .node.solid .nt,.node.solid .ns{fill:var(--surface)}
 .node .nt{fill:var(--ink);font-weight:700;font-size:17px;text-anchor:middle}
-.node .ns{fill:var(--muted);font-size:13px;text-anchor:middle}
+.node .ns{fill:var(--muted);font-size:13.5px;text-anchor:middle}
 a .node{cursor:pointer}
 a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--surface))}
 .box{fill:none;stroke:var(--line);stroke-width:1.6}
@@ -84,8 +84,8 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 .box.c{stroke:var(--c);fill:color-mix(in srgb,var(--c) 6%,transparent)}
 .lbl{fill:var(--muted);font-size:14px;font-weight:700}
 .lbl.c{fill:var(--c)}
-.small{fill:var(--muted);font-size:13px}
-.tiny{fill:var(--muted);font-size:11.5px}
+.small{fill:var(--muted);font-size:13.5px}
+.tiny{fill:var(--muted);font-size:12.5px}
 .ink{fill:var(--ink)}
 .mono{font-family:var(--f-mono)!important}
 .wire{fill:none;stroke:var(--muted);stroke-width:2}
@@ -98,8 +98,8 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 .okt{fill:var(--ok);font-weight:700}
 .person{fill:var(--muted)}
 .badge-n{fill:var(--ink)}
-.badge-t{fill:var(--bg);font-family:var(--f-mono);font-size:13px;font-weight:600;text-anchor:middle}
-.pilltxt{fill:var(--surface);font-size:13px;font-weight:700;text-anchor:middle}
+.badge-t{fill:var(--bg);font-family:var(--f-mono);font-size:14px;font-weight:600;text-anchor:middle}
+.pilltxt{fill:var(--surface);font-size:14px;font-weight:700;text-anchor:middle}
 .land{fill:var(--land)}
 
 /* map grid */
@@ -112,7 +112,7 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 .card:hover,.card:focus-visible{border-color:var(--c);transform:translateY(-2px);outline:none}
 .card .ib{grid-row:span 2;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
 .card b{font-size:16px;line-height:1.3}
-.card small{color:var(--muted);font-size:12.5px;line-height:1.4}
+.card small{color:var(--muted);font-size:13.5px;line-height:1.4}
 .card.kiro{border-style:dashed;border-color:var(--c)}
 .ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
@@ -122,7 +122,7 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 .svc-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 18px;align-items:center;margin-bottom:22px}
 .badge{grid-row:span 3;width:68px;height:68px;border-radius:18px;display:grid;place-items:center;color:var(--surface);background:var(--c)}
 .badge .ico{width:36px;height:36px;stroke-width:1.7}
-.tag{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--c)}
+.tag{font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--c)}
 .svc-head h2{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
 .svc-head h2 .en{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,5vw,44px);line-height:1.1}
 .svc-head h2 .ja{font-size:clamp(17px,2.4vw,22px);font-weight:700;color:var(--c)}
@@ -139,25 +139,25 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 
 /* chips & points */
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;padding:6px 12px;border-radius:999px;background:color-mix(in srgb,var(--c) 11%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:14.5px;padding:6px 12px;border-radius:999px;background:color-mix(in srgb,var(--c) 11%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
 .chip.star{background:var(--c);color:var(--surface);border-color:var(--c);font-weight:700}
 .uses{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.use{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13.5px;line-height:1.4}
-.use i{font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--c);font-weight:600}
+.use{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:14.5px;line-height:1.4}
+.use i{font-style:normal;font-family:var(--f-mono);font-size:12px;color:var(--c);font-weight:600}
 .warn{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:14px 16px;border-radius:14px;background:color-mix(in srgb,var(--ng) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--ng) 35%,transparent)}
 .warn .ico{color:var(--ng);width:24px;height:24px;margin-top:2px}
-.warn b{display:block;color:var(--ng);font-size:13.5px}
+.warn b{display:block;color:var(--ng);font-size:14.5px}
 .warn ul{margin:4px 0 0;padding-left:1.1em;font-size:14px}
 .warn li + li{margin-top:2px}
 .oneliner{padding:14px 18px;border-radius:14px;border:2px solid var(--c);display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:15px}
-.oneliner b{font-family:var(--f-display);font-weight:400;color:var(--c);font-size:13px;letter-spacing:.06em}
-.note{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.oneliner b{font-family:var(--f-display);font-weight:400;color:var(--c);font-size:14px;letter-spacing:.06em}
+.note{font-size:13.5px;color:var(--muted);margin:10px 0 0}
 
 /* EC2 states */
 .states{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .state{border-radius:14px;padding:14px 12px;text-align:center;background:var(--soft);display:grid;gap:4px;justify-items:center}
 .state b{font-size:15px}
-.state small{font-size:12px;color:var(--muted);line-height:1.45}
+.state small{font-size:13px;color:var(--muted);line-height:1.45}
 .state .coin{font-family:var(--f-mono);font-weight:600;font-size:20px;letter-spacing:.06em}
 .state.on{background:color-mix(in srgb,var(--ng) 12%,var(--surface))}
 .state.on .coin{color:var(--ng)}
@@ -166,76 +166,76 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 @media (max-width:420px){.states{grid-template-columns:minmax(0,1fr)}}
 .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .tile{padding:12px 14px;border-radius:12px;border:1px solid var(--line)}
-.tile .k{font-family:var(--f-mono);font-size:12px;color:var(--c);font-weight:600}
+.tile .k{font-family:var(--f-mono);font-size:13px;color:var(--c);font-weight:600}
 .tile b{display:block;font-size:15px;line-height:1.4}
-.tile span{font-size:12.5px;color:var(--muted)}
+.tile span{font-size:13.5px;color:var(--muted)}
 
 /* tree / timeline */
-.tree{font-family:var(--f-mono);font-size:13.5px;line-height:1.9;background:var(--soft);border-radius:12px;padding:14px 16px;overflow-x:auto;white-space:pre;margin:0}
+.tree{font-family:var(--f-mono);font-size:14.5px;line-height:1.9;background:var(--soft);border-radius:12px;padding:14px 16px;overflow-x:auto;white-space:pre;margin:0}
 .tree .b{color:var(--c);font-weight:600}
 .tree .m{color:var(--muted)}
 .timeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));position:relative;margin-top:6px}
 .timeline::before{content:"";position:absolute;left:8%;right:8%;top:16px;height:4px;background:linear-gradient(90deg,var(--c),var(--c-ops),var(--ng));border-radius:3px}
 .tstep{position:relative;text-align:center;display:grid;justify-items:center;gap:2px;padding-inline:4px}
-.tstep .dot{width:36px;height:36px;border-radius:50%;background:var(--surface);border:3px solid var(--c);display:grid;place-items:center;font-family:var(--f-mono);font-size:11.5px;font-weight:600}
+.tstep .dot{width:36px;height:36px;border-radius:50%;background:var(--surface);border:3px solid var(--c);display:grid;place-items:center;font-family:var(--f-mono);font-size:12.5px;font-weight:600}
 .tstep:nth-child(2) .dot{border-color:var(--c-ops)}
 .tstep:nth-child(3) .dot{border-color:var(--ng)}
 .tstep b{font-size:14px;margin-top:4px}
-.tstep small{font-size:12px;color:var(--muted);line-height:1.4}
+.tstep small{font-size:13px;color:var(--muted);line-height:1.4}
 
 /* compare */
 .cmp{width:100%;border-collapse:collapse;font-size:14px}
 .cmp th,.cmp td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
-.cmp thead th{font-size:13px;color:var(--muted);font-weight:700}
+.cmp thead th{font-size:14px;color:var(--muted);font-weight:700}
 .cmp thead th.c1{color:var(--c)}
-.cmp tbody th{font-weight:500;color:var(--muted);font-size:13px}
+.cmp tbody th{font-weight:500;color:var(--muted);font-size:14px}
 .cmp tr:last-child th,.cmp tr:last-child td{border-bottom:0}
 .dots{display:inline-flex;gap:3px;vertical-align:middle;margin-right:6px}
 .dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
 .dots i.on{background:var(--c)}
 .dots.g i.on{background:var(--muted)}
-.cmp small{color:var(--muted);font-size:12px;display:block;line-height:1.3}
-.code{font-family:var(--f-mono);font-size:12.5px;background:var(--soft);border-radius:10px;padding:10px 12px;overflow-x:auto;white-space:pre;margin:10px 0 0;line-height:1.6}
+.cmp small{color:var(--muted);font-size:13px;display:block;line-height:1.3}
+.code{font-family:var(--f-mono);font-size:13.5px;background:var(--soft);border-radius:10px;padding:10px 12px;overflow-x:auto;white-space:pre;margin:10px 0 0;line-height:1.6}
 .code .k{color:var(--c);font-weight:600}
 
 /* IAM formula */
 .formula{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center}
 .fpart{text-align:center;padding:12px 16px;border-radius:14px;background:color-mix(in srgb,var(--c) 11%,var(--surface));min-width:120px}
 .fpart b{display:block;font-size:22px;color:var(--c);font-family:var(--f-display);font-weight:400}
-.fpart small{font-size:12px;color:var(--muted)}
+.fpart small{font-size:13px;color:var(--muted)}
 .fop{font-family:var(--f-display);font-size:22px;color:var(--muted)}
 .elements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 
 /* Lambda bill */
 .bill{display:grid;gap:14px}
-.billrow{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;align-items:center;font-size:13px}
+.billrow{display:grid;grid-template-columns:72px minmax(0,1fr);gap:10px;align-items:center;font-size:14px}
 .billrow b{font-size:14px}
 .bar{position:relative;height:36px;border-radius:8px;background:var(--soft);overflow:hidden}
 .bar .full{position:absolute;inset:0;background:color-mix(in srgb,var(--c-compute) 70%,transparent)}
 .bar .spike{position:absolute;top:0;bottom:0;width:1.8%;background:var(--c)}
-.bar span.t{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--ink);background:color-mix(in srgb,var(--surface) 70%,transparent);padding:0 6px;border-radius:4px}
-.axis{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;color:var(--muted);padding-left:82px}
+.bar span.t{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;color:var(--ink);background:color-mix(in srgb,var(--surface) 70%,transparent);padding:0 6px;border-radius:4px}
+.axis{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:12px;color:var(--muted);padding-left:82px}
 .vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .vs > div{padding:14px;border-radius:12px;background:var(--soft);text-align:center}
 .vs b{display:block;font-size:16px}
-.vs small{color:var(--muted);font-size:12.5px}
+.vs small{color:var(--muted);font-size:13.5px}
 
 /* CloudFront routes */
 .route{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr) auto;align-items:center;gap:8px;padding:14px 0}
 .route + .route{border-top:1px dashed var(--line)}
-.route .tag2{grid-column:1/-1;font-size:13px;font-weight:700;color:var(--muted);display:flex;gap:8px;align-items:center}
-.pill{display:inline-block;font-size:11px;font-weight:700;padding:1px 9px;border-radius:999px}
+.route .tag2{grid-column:1/-1;font-size:14px;font-weight:700;color:var(--muted);display:flex;gap:8px;align-items:center}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:1px 9px;border-radius:999px}
 .pill.slow{background:color-mix(in srgb,var(--ng) 15%,transparent);color:var(--ng)}
 .pill.fast{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
-.pt{padding:8px 10px;border-radius:10px;background:var(--soft);font-size:12.5px;text-align:center;line-height:1.35;min-width:0}
-.pt b{display:block;font-size:13px}
+.pt{padding:8px 10px;border-radius:10px;background:var(--soft);font-size:13.5px;text-align:center;line-height:1.35;min-width:0}
+.pt b{display:block;font-size:14px}
 .pt.edge{background:var(--c);color:var(--surface)}
 .pt.ghost{visibility:hidden}
 .ln{height:0;border-top:3px solid var(--muted);position:relative}
 .ln.long{border-top-style:dashed;border-color:var(--ng)}
 .ln.short{border-color:var(--ok)}
 .ln.faint{border-top-style:dotted;border-color:var(--muted)}
-.ln span{position:absolute;left:50%;transform:translate(-50%,-130%);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.ln span{position:absolute;left:50%;transform:translate(-50%,-130%);font-size:12.5px;color:var(--muted);white-space:nowrap}
 @media (max-width:480px){.ln span{display:none}}
 
 /* Route53 records */
@@ -243,24 +243,24 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 @media (max-width:760px){.recs{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .rec{padding:12px;border-radius:12px;border:1px solid var(--line)}
 .rec b{font-family:var(--f-mono);font-size:18px;color:var(--c)}
-.rec span{display:block;font-size:13.5px;line-height:1.45}
-.rec code{font-size:11.5px;color:var(--muted);word-break:break-all}
+.rec span{display:block;font-size:14.5px;line-height:1.45}
+.rec code{font-size:12.5px;color:var(--muted);word-break:break-all}
 
 .fit{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .fit li{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:10px;font-size:14px;padding:8px 10px;border-radius:10px;background:var(--soft)}
 .fit .m{font-size:18px;text-align:center;font-weight:700;color:var(--ok)}
 .fit .m.tri{color:var(--c-ops)}
-.fit small{color:var(--muted);font-size:12px}
+.fit small{color:var(--muted);font-size:13px}
 .regions{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .regions li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 12px;border-radius:10px;background:var(--soft);font-size:14px}
-.regions code{font-size:12px;color:var(--c)}
+.regions code{font-size:13px;color:var(--c)}
 .regions li.note2{background:color-mix(in srgb,var(--c-ops) 13%,var(--surface))}
-.regions li small{grid-column:1/-1;font-size:12px;color:var(--muted);line-height:1.4}
+.regions li small{grid-column:1/-1;font-size:13px;color:var(--muted);line-height:1.4}
 
 /* Kiro */
 .kiro-sec{padding-block:64px 16px;scroll-margin-top:60px}
 .kiro-hero{border-radius:22px;padding:28px;background:color-mix(in srgb,var(--c) 10%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c) 45%,transparent)}
-.kiro-hero .new{display:inline-block;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.12em;padding:3px 10px;border-radius:999px;background:var(--c);color:var(--surface)}
+.kiro-hero .new{display:inline-block;font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.12em;padding:3px 10px;border-radius:999px;background:var(--c);color:var(--surface)}
 .kiro-hero h2{margin-top:12px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px}
 .kiro-hero h2 .en{font-family:var(--f-display);font-weight:400;font-size:clamp(34px,5.6vw,52px);line-height:1.1}
 .kiro-hero h2 .ja{font-size:clamp(17px,2.4vw,22px);font-weight:700;color:var(--c)}
@@ -268,22 +268,22 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 .modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
 .mode{padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
 .mode b{font-size:17px}
-.mode .k{font-family:var(--f-mono);font-size:11.5px;color:var(--c);font-weight:600;display:block}
-.mode p{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+.mode .k{font-family:var(--f-mono);font-size:12.5px;color:var(--c);font-weight:600;display:block}
+.mode p{margin:4px 0 0;font-size:14.5px;color:var(--muted)}
 @media (max-width:560px){.modes{grid-template-columns:minmax(0,1fr)}}
 .feat{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .f{padding:16px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
-.f .k{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--c)}
+.f .k{font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--c)}
 .f b{display:block;font-size:16px;margin-top:2px}
-.f p{margin:6px 0 0;font-size:13.5px;color:var(--muted);line-height:1.6}
-.doc{font-family:var(--f-mono);font-size:12.5px;line-height:1.75;background:var(--soft);border-radius:12px;padding:14px 16px;overflow-x:auto;white-space:pre;margin:0}
+.f p{margin:6px 0 0;font-size:14.5px;color:var(--muted);line-height:1.6}
+.doc{font-family:var(--f-mono);font-size:13.5px;line-height:1.75;background:var(--soft);border-radius:12px;padding:14px 16px;overflow-x:auto;white-space:pre;margin:0}
 .doc .h{color:var(--c);font-weight:600}
 .doc .hl{background:color-mix(in srgb,var(--c-ops) 30%,transparent);border-radius:3px;padding:0 2px}
 .tbl-wrap{overflow-x:auto}
 .price{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums;min-width:360px}
 .price th,.price td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right}
 .price th:first-child,.price td:first-child{text-align:left}
-.price thead th{font-size:12.5px;color:var(--muted);font-weight:700}
+.price thead th{font-size:13.5px;color:var(--muted);font-weight:700}
 .price td.plan{font-weight:700}
 .price .barc{width:38%;text-align:left}
 .cbar{height:12px;border-radius:6px;background:var(--c);min-width:3px}
@@ -293,13 +293,13 @@ a:hover .node rect,a:focus .node rect{fill:color-mix(in srgb,var(--c) 14%,var(--
 .sum-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px}
 .sum{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
 .sum th,.sum td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left}
-.sum thead th{font-size:12.5px;color:var(--muted);background:var(--soft)}
+.sum thead th{font-size:13.5px;color:var(--muted);background:var(--soft)}
 .sum tbody tr:last-child td{border-bottom:0}
 .sum td:first-child{font-weight:700;white-space:nowrap}
 .sum td:first-child::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--c);margin-right:8px}
 .sum a{text-decoration:none}
 .sum a:hover{text-decoration:underline}
-footer{padding-block:0 48px;color:var(--muted);font-size:12.5px}
+footer{padding-block:0 48px;color:var(--muted);font-size:13.5px}
 footer a{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
@@ -565,7 +565,7 @@ footer a{color:var(--muted)}
         <text class="ngt" x="186" y="230" text-anchor="middle" style="font-size:14px">✕ 見られない</text>
         <use href="#i-user" x="826" y="206" width="44" height="48" style="color:var(--c-sec)"/>
         <rect x="864" y="196" width="40" height="20" rx="10" style="fill:var(--c-sec)"/>
-        <text x="884" y="210" text-anchor="middle" style="fill:var(--surface);font-size:11px;font-weight:700">IAM</text>
+        <text x="884" y="210" text-anchor="middle" style="fill:var(--surface);font-size:12px;font-weight:700">IAM</text>
         <text class="small" x="848" y="276" text-anchor="middle">許可された</text>
         <text class="small" x="848" y="294" text-anchor="middle">人・アプリ</text>
         <path class="wire ok" d="M816 236H610" marker-end="url(#ahok)"/>
@@ -671,6 +671,7 @@ footer a{color:var(--muted)}
       <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>よくある注意ポイント</b>
         <ul><li>起動しっぱなしで課金され続ける</li><li>テスト中に「パブリックアクセスON」のまま</li><li>小さすぎると遅い、大きすぎるとお金が溶ける</li></ul></div></div>
     </div>
+    <div class="oneliner"><b>まとめ</b>RDSは「AWSが管理してくれるクラウドDB屋さん」。ラクしたいならRDS、全部自分で触りたいならEC2にDB。本番環境はRDSにしておくと安心。</div>
   </div>
 </section>
 
@@ -838,6 +839,7 @@ footer a{color:var(--muted)}
           <ul><li>アラーム未設定で、いつの間にかサーバーが落ちている</li><li>ログが無限に貯まって料金が増える → 保存期間を設定</li></ul></div></div>
       </div>
     </div>
+    <div class="oneliner"><b>まとめ</b>CloudWatchは「AWSの見張り番＆お知らせ役」。トラブルを未然に防ぎ、原因を早く見つけるための相棒。</div>
   </div>
 </section>
 
@@ -894,6 +896,7 @@ footer a{color:var(--muted)}
           <ul><li>1回の実行は最大15分まで。長い処理は分割を</li><li>タイムアウト設定ミスで処理が途中で落ちる</li><li>ライブラリが多いとZIPが大きくなる → レイヤー機能で分離</li></ul></div></div>
       </div>
     </div>
+    <div class="oneliner"><b>まとめ</b>Lambdaは「最小構成で最大効果」を出す切り札。サーバーを立てたくない・たまにしか動かない・運用をラクにしたい処理にぴったり。</div>
   </div>
 </section>
 
@@ -940,7 +943,7 @@ footer a{color:var(--muted)}
         </g>
         <!-- origin -->
         <circle cx="853" cy="141" r="16" style="fill:var(--c-storage);stroke:var(--surface);stroke-width:3"/>
-        <text x="853" y="146" text-anchor="middle" style="fill:var(--surface);font-size:11px;font-weight:700">S3</text>
+        <text x="853" y="146" text-anchor="middle" style="fill:var(--surface);font-size:12px;font-weight:700">S3</text>
         <rect x="770" y="84" width="166" height="30" rx="15" style="fill:var(--c-storage)"/>
         <text class="pilltxt" x="853" y="104">東京のS3（元データ）</text>
         <!-- legend -->
@@ -983,6 +986,7 @@ footer a{color:var(--muted)}
       <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>注意点</b>
         <ul><li>キャッシュが効いて古い内容が出続ける → キャッシュ無効化（Invalidation）</li><li>HTTPSには証明書が必要 → ACMで無料発行</li><li>設定項目は多いが、S3＋デフォルト設定なら最小限で始められる</li></ul></div></div>
     </div>
+    <div class="oneliner"><b>まとめ</b>CloudFrontは「高速配信」の頼れる助っ人。世界中どこからでもサクッと表示。S3と組み合わせると安い・速い・うまい。</div>
   </div>
 </section>
 
@@ -1043,6 +1047,7 @@ footer a{color:var(--muted)}
       </div>
     </div>
     <div class="oneliner"><b>鉄板構成</b>ファイルはS3 → 配信はCloudFront → ドメインはRoute 53。これで「https://自分のドメイン」のサイトが完成。</div>
+    <div class="oneliner"><b>まとめ</b>Route 53は「名前の入り口」を管理するサービス。ドメインをAWSで扱うなら、まずここ。最初はややこしいけど、慣れたら簡単。</div>
   </div>
 </section>
 
@@ -1118,6 +1123,7 @@ footer a{color:var(--muted)}
         </ul>
       </div>
     </div>
+    <div class="oneliner"><b>まとめ</b>LightsailはAWSの「最初の一歩」にぴったり。月額固定で安心して始められ、WordPressなども数分で立ち上がる。</div>
   </div>
 </section>
 
@@ -1175,6 +1181,7 @@ footer a{color:var(--muted)}
       <div class="warn"><svg class="ico"><use href="#i-warn"/></svg><div><b>よくあるハマりどころ</b>
         <ul><li>全部非公開にして外と通信できない</li><li>セキュリティ設定が厳しすぎて何もつながらない</li><li>最初はAWSが用意している「デフォルトVPC」で感覚をつかむのもアリ</li></ul></div></div>
     </div>
+    <div class="oneliner"><b>まとめ</b>VPCはAWSでインフラを組むときの「土地」。ここを押さえれば、AWSエンジニアとして一歩リード。</div>
   </div>
 </section>
 
@@ -1247,6 +1254,7 @@ footer a{color:var(--muted)}
         <ul><li>HTTPS化はELBで（証明書はACMから）</li><li>セキュリティグループの設定漏れで全ブロック</li><li>DNS名が <code>*.elb.amazonaws.com</code> になるので独自ドメインはRoute 53と連携</li></ul></div></div>
     </div>
     <div class="oneliner"><b>鉄板パターン</b>サーバーを増やす ＝ ELBを入れる。Auto ScalingでEC2を2台→3台に増やしても、URLはそのまま。</div>
+    <div class="oneliner"><b>まとめ</b>ELBは「たくさんのアクセスをうまくさばく交通整理係」。サービスをスケーラブルにしたいときは必須。</div>
   </div>
 </section>
 
@@ -1338,6 +1346,7 @@ footer a{color:var(--muted)}
         <figcaption>AZを分けるだけでなく、切り替えまで含めた構成（マルチAZ）にしておくのがポイント。S3のように、AWSが自動でAZに分散してくれるサービスもあります。</figcaption>
       </figure>
     </div>
+    <div class="oneliner"><b>まとめ</b>AWSは「分散」が正義。リージョンは地域ごとの営業所エリア、AZはその中の独立した建物。本番運用ならマルチAZ構成が当たり前。</div>
   </div>
 </section>
 
@@ -1372,15 +1381,15 @@ footer a{color:var(--muted)}
           <path d="M216 40H346L376 70V220H216Z" style="fill:var(--surface);stroke:var(--c-ai);stroke-width:2"/><path d="M346 40V70H376" style="fill:none;stroke:var(--c-ai);stroke-width:2"/>
           <text class="mono" x="230" y="64" style="fill:var(--c-ai);font-size:11.5px;font-weight:600">requirements</text>
           <text class="ink" x="230" y="94" style="font-size:15px;font-weight:700">要件</text>
-          <g class="mono" style="font-size:10.5px;fill:var(--muted)"><text x="230" y="120">WHEN 訪問者が</text><text x="230" y="136">  アクセスしたら</text><text x="230" y="152">THE SYSTEM</text><text x="230" y="168">  SHALL HTTPSで</text><text x="230" y="184">  表示する</text></g>
+          <g class="mono" style="font-size:11.5px;fill:var(--muted)"><text x="230" y="120">WHEN 訪問者が</text><text x="230" y="136">  アクセスしたら</text><text x="230" y="152">THE SYSTEM</text><text x="230" y="168">  SHALL HTTPSで</text><text x="230" y="184">  表示する</text></g>
         </g>
         <g>
           <path d="M416 40H546L576 70V220H416Z" style="fill:var(--surface);stroke:var(--c-ai);stroke-width:2"/><path d="M546 40V70H576" style="fill:none;stroke:var(--c-ai);stroke-width:2"/>
           <text class="mono" x="430" y="64" style="fill:var(--c-ai);font-size:11.5px;font-weight:600">design</text>
           <text class="ink" x="430" y="94" style="font-size:15px;font-weight:700">設計</text>
-          <rect x="430" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-net);stroke-width:1.6"/><text x="450" y="129" text-anchor="middle" style="fill:var(--c-net);font-size:10px;font-weight:700">R53</text>
-          <rect x="476" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-net);stroke-width:1.6"/><text x="496" y="129" text-anchor="middle" style="fill:var(--c-net);font-size:10px;font-weight:700">CF</text>
-          <rect x="522" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-storage);stroke-width:1.6"/><text x="542" y="129" text-anchor="middle" style="fill:var(--c-storage);font-size:10px;font-weight:700">S3</text>
+          <rect x="430" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-net);stroke-width:1.6"/><text x="450" y="129" text-anchor="middle" style="fill:var(--c-net);font-size:11px;font-weight:700">R53</text>
+          <rect x="476" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-net);stroke-width:1.6"/><text x="496" y="129" text-anchor="middle" style="fill:var(--c-net);font-size:11px;font-weight:700">CF</text>
+          <rect x="522" y="112" width="40" height="26" rx="5" style="fill:none;stroke:var(--c-storage);stroke-width:1.6"/><text x="542" y="129" text-anchor="middle" style="fill:var(--c-storage);font-size:11px;font-weight:700">S3</text>
           <path d="M470 125H476M516 125H522" style="stroke:var(--muted);stroke-width:1.6"/>
           <g style="fill:var(--line)"><rect x="430" y="154" width="130" height="7" rx="3"/><rect x="430" y="170" width="110" height="7" rx="3"/><rect x="430" y="186" width="120" height="7" rx="3"/></g>
         </g>
@@ -1481,6 +1490,7 @@ footer a{color:var(--muted)}
         </div>
       </div>
     </div>
+    <div class="oneliner"><b>まとめ</b>Kiroは「要件 → 設計 → タスク」をAIが書き、人が確認しながら進める開発パートナー。AWSの基本を知っていれば、AIの提案を自分で判断できる。</div>
   </div>
 </section>
 
